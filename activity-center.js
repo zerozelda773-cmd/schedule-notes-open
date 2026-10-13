@@ -17,8 +17,8 @@
   const PRODUCT_TOPICS = {
     "Primary Product A": "Primary Product A\u7684\u4E34\u5E8A\u5E94\u7528\u75C5\u4F8B\u5206\u4EAB",
     "Primary Product B": "Primary Product B\u5728\u7BA1\u9972\u60A3\u8005\u4E2D\u7684\u4E34\u5E8A\u5E94\u7528",
-    舒复派: "Auxiliary Product A\u7684\u4E34\u5E8A\u5E94\u7528",
-    增稠派: "Auxiliary Product B\u7684\u4E34\u5E8A\u5E94\u7528"
+    "Auxiliary Product A": "Auxiliary Product A\u7684\u4E34\u5E8A\u5E94\u7528",
+    "Auxiliary Product B": "Auxiliary Product B\u7684\u4E34\u5E8A\u5E94\u7528"
   };
   function text(value) {
     return String(value ?? '').trim();

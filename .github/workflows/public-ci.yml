@@ -20,6 +20,8 @@ jobs:
           node-version: '24'
       - name: Static safety before package installation
         run: node scripts/public-safety.cjs
+      - name: Public catalogue boundary
+        run: node scripts/public-product-boundary.cjs
       - name: Locked public dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Workflow syntax and policy

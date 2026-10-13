@@ -9,7 +9,7 @@
     },
     {
       "path": ".github/workflows/public-ci.yml",
-      "sha256": "209d2d756f2a9b8ca1b0023a4f82d211f6309ead3d39efaf0961767f852fddb5"
+      "sha256": "6361a92651626408e11196e280a9b16c90a6de46d06b83720b4ce037674ecfcd"
     },
     {
       "path": ".gitignore",
@@ -17,7 +17,7 @@
     },
     {
       "path": "activity-center.js",
-      "sha256": "6a0264f9717be74c44741c8c83e4efeb0607db6d2bcac58e518d88ab94acd249"
+      "sha256": "6e870917217e225249bf61ff7bbe82b72e3747381d766479ea062105d484952a"
     },
     {
       "path": "activity-draft-store.js",
@@ -622,6 +622,14 @@
     {
       "path": "workspace-navigation.js",
       "sha256": "35e19a2e54703b36d123f09c76985bd2045c54e2c9fac93c5379d28e45eb2df5"
+    },
+    {
+      "path": "scripts/public-product-boundary.cjs",
+      "sha256": "fb9094f7a79bc3a9bc25520de8e515a45109643a443e9dd673fbd47997af91e5"
+    },
+    {
+      "path": "tests/public-catalogue-boundary.test.cjs",
+      "sha256": "13b00eed5cc9fa6090cae06bac6f7ee3e2ca13dd0c98bc15da9557a37b50680e"
     }
   ]
 }
