@@ -40,6 +40,8 @@ jobs:
         run: node scripts/browser-equivalence.cjs
       - name: Activity CREATE/EDIT draft recovery and actual process restart
         run: node scripts/browser-draft-recovery.cjs
+      - name: Synthetic Shadow authority and navigation witnesses
+        run: node scripts/browser-shadow-gate.cjs
       - name: Auditable runtime source license closure
         run: node scripts/build-notices.cjs
       - name: Static source and built-output safety

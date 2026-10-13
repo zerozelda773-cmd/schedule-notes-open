@@ -93,6 +93,12 @@
     }
     return patch;
   }
+  function exactHospital(id, records = []) {
+    const key = String(id || '').trim();
+    if (!key) return null;
+    const valid = records.filter(row => row.hospitalId === key && row.active !== false && !row.deletedAt);
+    return valid.length === 1 ? clone(valid[0]) : null;
+  }
   function create(options = {}) {
     const browserHistory = options.history || (typeof history !== 'undefined' ? history : null);
     const browserWindow = options.window || (typeof window !== 'undefined' ? window : null);
@@ -107,7 +113,8 @@
           schemaVersion: 1,
           type: 'workspace-context',
           destination: entry.contract.destination,
-          entryId: entry.id
+          entryId: entry.id,
+          ...(entry.contract.destination === 'hospital-context' ? {hospitalEntry:clone(entry)} : {})
         }
       };
     }
@@ -209,6 +216,13 @@
       restoreSource(currentEntry);
       return true;
     }
+    function restoreHospitalHistory(historyRecord = browserHistory?.state) {
+      const frame = historyRecord?.workspaceNavigation;
+      const saved = frame?.hospitalEntry;
+      if (frame?.schemaVersion !== 1 || frame.type !== 'workspace-context' || saved?.contract?.destination !== 'hospital-context' || !saved.contract.context?.hospital?.id) return false;
+      const restored = {...clone(saved), contract:normalizeContract(saved.contract)};
+      entries.set(restored.id, restored); showEntry(restored); return true;
+    }
     function handlePopState(event) {
       const state = event?.state?.workspaceNavigation;
       if (event?.state?.workspaceNavigationLocalRoute && options.handlePopState?.(event)) return true;
@@ -216,6 +230,7 @@
         showEntry(entries.get(state.entryId));
         return true;
       }
+      if (restoreHospitalHistory(event?.state)) return true;
       if (currentEntry) return handleBack('popstate');
       return Boolean(options.handlePopState?.(event));
     }
@@ -267,6 +282,7 @@
       handleBack,
       handlePopState,
       syncSourceSnapshot,
+      restoreHospitalHistory,
       install,
       destroy,
       getCurrentEntry: () => clone(currentEntry)
@@ -278,6 +294,7 @@
     normalizeContext,
     normalizeContract,
     resolvedFilterPatch,
+    exactHospital,
     customerMatchStatus,
     isReliableCustomerMatch,
     create

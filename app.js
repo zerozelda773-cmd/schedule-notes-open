@@ -921,6 +921,7 @@ function hospitalDirectorySnapshot({
     invalidRecords: []
   };
   const inputs = [state.records, state.records.length, state.activityLedgerEntries, state.activityLedgerEntries.length, state.settings.hospitalMappingRows, state.settings.hospitalMappingRows?.length, state.settings.departmentIdentityRegistry, window.customerProfileV1App?.getMasterRecords?.().map(row => row.customerId + ':' + row.updatedAt).join('|') || ''];
+  inputs.push(JSON.stringify(state.settings.hospitalDirectoryOverrides || {}));
   if (hospitalDirectoryCacheReady && !refresh && inputs.every((value, index) => value === hospitalDirectoryInputs[index])) return hospitalDirectoryCache;
   hospitalDirectoryInputs = inputs;
   hospitalDirectoryCache = window.HospitalMaintenanceAdapter.buildHospitalDirectory(canonicalDepartmentRows(hospitalDirectorySourceRows()).flatMap(row => {
@@ -3792,8 +3793,8 @@ function openActivityContext(kind, payload, snapshot, labels = {}) {
     customerId: payload.customerId || undefined
   } : {
     customerId: payload.customerId || undefined,
-    hospital: payload.hospitalName || payload.hospitalCode ? {
-      id: payload.hospitalId || payload.hospitalCode || '',
+    hospital: payload.hospitalId || payload.hospitalName || payload.hospitalCode ? {
+      id: payload.hospitalId || '',
       name: payload.hospitalName || payload.hospitalCode || ''
     } : undefined
   };
@@ -3880,35 +3881,16 @@ function openCustomerFromTask(query, {
     meta: [profile?.hospital, profile?.department, profile?.product || product].filter(Boolean).join(' · ')
   });
 }
-function openHospitalMaintenance(query) {
+function openHospitalMaintenance(hospitalId, options = {}) {
+  const hospital = window.WorkspaceNavigation.exactHospital(hospitalId, hospitalDirectorySnapshot().hospitals);
+  const sourceTask = state.tasks.find(item => item.id === options.taskId && item.hospitalId === hospitalId);
   window.taskProgressV2App?.closeDrawer?.();
   if (!workspaceNavigationController) return;
-  workspaceNavigationController.openContext({
-    destination: 'hospital-context',
-    source: {
-      module: 'task',
-      entityType: 'task',
-      entityId: String(query || ''),
-      routeKey: `task:hospital:${query || ''}`
-    },
-    context: {},
-    behavior: {
-      persistence: 'transient',
-      customerMatch: 'exact-only',
-      fallback: 'broader-context'
-    }
-  }, {
-    sourceWorkspace: 'tasks',
-    viewPayload: {
-      hospitalName: String(query || '')
-    },
-    title: String(query || '') || '医院 / 科室',
-    meta: '从任务进度进入'
-  });
+  workspaceNavigationController.openContext({destination:'hospital-context',source:{module:'task',entityType:'task',entityId:sourceTask?.id || String(hospitalId || ''),routeKey:'task:hospital'},context:{hospital:{id:hospital?.hospitalId || '',name:hospital?.hospitalName || ''}},behavior:{persistence:'transient',customerMatch:'exact-only',fallback:'broader-context'}},{sourceWorkspace:'tasks',viewPayload:{hospitalId:hospital?.hospitalId || '',hospitalName:hospital?.hospitalName || ''},title:hospital?.hospitalName || '医院资料',meta:'从任务进度进入'});
 }
 function openActivityHospitalContext(activity, snapshot) {
   const payload = activityContextMeta(activity, snapshot);
-  if (!payload.hospitalName && !payload.hospitalCode) {
+  if (!payload.hospitalId && !payload.hospitalName && !payload.hospitalCode) {
     showToast('请先填写Synthetic Hospital Example或编码');
     return false;
   }
@@ -4045,7 +4027,7 @@ function showWorkspaceEntry(entry) {
       queueMicrotask(() => decorateActivityContextBack('#customerView [data-cp-close]'));
     }
     if (destination === 'hospital-context') {
-      const opened = window.customerProfileV1App?.openHospital?.(payload.hospitalCode) || window.customerProfileV1App?.openHospital?.(payload.hospitalName);
+      const opened = window.customerProfileV1App?.openHospital?.(entry.contract?.context?.hospital?.id || '');
       if (!opened) {
         els.customerProfileV1?.querySelector('[data-cp-mode="hospitals"]')?.click();
         const search = els.customerProfileV1?.querySelector('#cpSearch');
@@ -6583,7 +6565,7 @@ function handleTaskListClick(event) {
   }
   const hospitalButton = event.target.closest('[data-task-hospital-context]');
   if (hospitalButton) {
-    openHospitalMaintenance(hospitalButton.dataset.taskHospitalContext);
+    openHospitalMaintenance(hospitalButton.dataset.taskHospitalContext, {taskId:hospitalButton.closest('[data-task-card]')?.dataset.taskCard || ''});
     return;
   }
   const progressButton = event.target.closest('[data-progress-task]');
@@ -7279,6 +7261,7 @@ async function initializeApp() {
     skipCloud: true
   });
   mountTaskProgressV2();
+  workspaceNavigationController?.restoreHospitalHistory?.();
   window.addEventListener('hashchange', () => {
     if (!location.hash.startsWith('#/activity/')) return;
     if (els.activityView.hidden) switchView('activities', {

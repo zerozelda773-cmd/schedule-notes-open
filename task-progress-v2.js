@@ -176,7 +176,7 @@
           <div><strong>${esc(item.hospitalName || '未命名医院')}</strong><span>${item.completeness == null ? esc(item.informationStatus || '完整度待上游提供') : `资料完整度 ${item.completeness}%`}</span></div>
           ${item.completeness == null ? '' : `<div class="tpv2-completeness" aria-label="资料完整度 ${item.completeness}%"><i style="--completeness:${item.completeness}%"></i></div>`}
           <p><b>缺失：</b>${item.missingFields?.length ? missingSummary(item.missingFields) : '<span>缺失项待上游提供</span>'}</p>
-          <footer>${item.taskId ? `<button type="button" data-tpv2-task="${esc(item.taskId)}">查看任务</button>` : `<button class="is-primary" type="button" data-tpv2-add-hospital="${esc(item.id)}"${item.hospitalId ? '' : ' disabled'}>${item.hospitalId ? '加入任务' : '匹配待确认'}</button>`}<button type="button" data-tpv2-dismiss-hospital="${esc(item.id)}">不再推荐</button><button type="button" data-tpv2-hospital="${esc(item.hospitalId || item.hospitalName)}">查看医院资料</button></footer>
+          <footer>${item.taskId ? `<button type="button" data-tpv2-task="${esc(item.taskId)}">查看任务</button>` : `<button class="is-primary" type="button" data-tpv2-add-hospital="${esc(item.id)}"${item.hospitalId ? '' : ' disabled'}>${item.hospitalId ? '加入任务' : '匹配待确认'}</button>`}<button type="button" data-tpv2-dismiss-hospital="${esc(item.id)}">不再推荐</button><button type="button" data-tpv2-hospital="${esc(item.hospitalId)}">查看医院资料</button></footer>
         </article>`).join('')}</div>` : emptyState('医院资料当前无需维护')}
       </section>`;
     }
@@ -207,7 +207,7 @@
         const groups = task.missingGroups || {};
         const hospitalFields = Array.isArray(groups.hospital) ? groups.hospital : [];
         const departments = Array.isArray(groups.departments) ? groups.departments : [];
-        return `<section class="tpv2-hospital-detail"><h3>待完善资料</h3><div class="tpv2-detail-grid"><div><span>资料完整度</span><strong>${task.completeness == null ? '待计算' : `${task.completeness}%`}</strong></div><div><span>最近检测</span><strong>${task.lastCheckedAt ? esc(formatDate(task.lastCheckedAt)) : '待检测'}</strong></div><div><span>维护周期</span><strong>第 ${Number(task.maintenanceCycle) || 1} 轮</strong></div><div><span>完成方式</span><strong>补齐数据后自动完成</strong></div></div>${hospitalFields.length ? `<div class="tpv2-missing-group"><strong>医院资料</strong><p>${hospitalFields.map(field => `<span class="tpv2-missing">${esc(field.label || field.field)}</span>`).join('')}</p></div>` : ''}${departments.map(department => `<div class="tpv2-missing-group"><strong>${esc(department.departmentName || '未命名科室')}</strong><p>${(department.missingFields || []).map(field => `<span class="tpv2-missing">${esc(field.label || field.field)}</span>`).join('')}</p></div>`).join('')}${!hospitalFields.length && !departments.length ? `<p>${task.missingFields.length ? task.missingFields.map(field => `<span class="tpv2-missing">${esc(field)}</span>`).join('') : '当前缺失项已清除'}</p>` : ''}<button class="is-primary" type="button" data-tpv2-hospital="${esc(task.hospitalId || task.hospital)}">去完善资料</button></section>`;
+        return `<section class="tpv2-hospital-detail"><h3>待完善资料</h3><div class="tpv2-detail-grid"><div><span>资料完整度</span><strong>${task.completeness == null ? '待计算' : `${task.completeness}%`}</strong></div><div><span>最近检测</span><strong>${task.lastCheckedAt ? esc(formatDate(task.lastCheckedAt)) : '待检测'}</strong></div><div><span>维护周期</span><strong>第 ${Number(task.maintenanceCycle) || 1} 轮</strong></div><div><span>完成方式</span><strong>补齐数据后自动完成</strong></div></div>${hospitalFields.length ? `<div class="tpv2-missing-group"><strong>医院资料</strong><p>${hospitalFields.map(field => `<span class="tpv2-missing">${esc(field.label || field.field)}</span>`).join('')}</p></div>` : ''}${departments.map(department => `<div class="tpv2-missing-group"><strong>${esc(department.departmentName || '未命名科室')}</strong><p>${(department.missingFields || []).map(field => `<span class="tpv2-missing">${esc(field.label || field.field)}</span>`).join('')}</p></div>`).join('')}${!hospitalFields.length && !departments.length ? `<p>${task.missingFields.length ? task.missingFields.map(field => `<span class="tpv2-missing">${esc(field)}</span>`).join('') : '当前缺失项已清除'}</p>` : ''}<button class="is-primary" type="button" data-tpv2-hospital="${esc(task.hospitalId)}">去完善资料</button></section>`;
       }
       return '';
     }
@@ -444,7 +444,7 @@
       }
       const hospital = event.target.closest('[data-tpv2-hospital]');
       if (hospital) {
-        config.onViewHospital?.(hospital.dataset.tpv2Hospital);
+        config.onViewHospital?.(hospital.dataset.tpv2Hospital, {taskId:state.selectedTaskId || ''});
         return;
       }
       const activity = event.target.closest('[data-tpv2-activity]');
