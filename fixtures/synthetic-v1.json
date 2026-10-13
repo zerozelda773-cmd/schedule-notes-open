@@ -1,0 +1,917 @@
+{
+  "synthetic": true,
+  "version": "synthetic-product-v1",
+  "hospitals": [
+    {
+      "id": "H_SYN_001",
+      "hospitalId": "H_SYN_001",
+      "canonicalName": "Synthetic Hospital Shared",
+      "name": "Synthetic Hospital Shared",
+      "hospitalCode": "CODE_SYN_1",
+      "purchaseUnitId": "PU_SYN_1",
+      "purchaseUnitIds": [
+        "PU_SYN_1"
+      ],
+      "aliases": [
+        "Synthetic Hospital Alias 1"
+      ],
+      "salesHospitalIds": [],
+      "hospitalLevel": "TERTIARY",
+      "city": "Synthetic City 1",
+      "source": "synthetic-product-v1",
+      "sourceIds": [
+        "SRC_SYN_1"
+      ],
+      "sourceFiles": [],
+      "legacyIds": [],
+      "evidence": [],
+      "verifiedAt": "2030-03-15",
+      "authorityKey": "synthetic:0",
+      "synthetic": true
+    },
+    {
+      "id": "H_SYN_002",
+      "hospitalId": "H_SYN_002",
+      "canonicalName": "Synthetic Hospital Shared",
+      "name": "Synthetic Hospital Shared",
+      "hospitalCode": "CODE_SYN_2",
+      "purchaseUnitId": "PU_SYN_2",
+      "purchaseUnitIds": [
+        "PU_SYN_2"
+      ],
+      "aliases": [
+        "Synthetic Hospital Alias 2"
+      ],
+      "salesHospitalIds": [],
+      "hospitalLevel": "SECONDARY",
+      "city": "Synthetic City 2",
+      "source": "synthetic-product-v1",
+      "sourceIds": [
+        "SRC_SYN_2"
+      ],
+      "sourceFiles": [],
+      "legacyIds": [],
+      "evidence": [],
+      "verifiedAt": "2030-03-15",
+      "authorityKey": "synthetic:1",
+      "synthetic": true
+    },
+    {
+      "id": "H_SYN_003",
+      "hospitalId": "H_SYN_003",
+      "canonicalName": "Synthetic Hospital 3",
+      "name": "Synthetic Hospital 3",
+      "hospitalCode": "CODE_SYN_3",
+      "purchaseUnitId": "PU_SYN_3",
+      "purchaseUnitIds": [
+        "PU_SYN_3"
+      ],
+      "aliases": [
+        "Synthetic Hospital Alias 3"
+      ],
+      "salesHospitalIds": [],
+      "hospitalLevel": "TERTIARY",
+      "city": "Synthetic City 3",
+      "source": "synthetic-product-v1",
+      "sourceIds": [
+        "SRC_SYN_3"
+      ],
+      "sourceFiles": [],
+      "legacyIds": [],
+      "evidence": [],
+      "verifiedAt": "2030-03-15",
+      "authorityKey": "synthetic:2",
+      "synthetic": true
+    },
+    {
+      "id": "H_SYN_004",
+      "hospitalId": "H_SYN_004",
+      "canonicalName": "Synthetic Hospital 4",
+      "name": "Synthetic Hospital 4",
+      "hospitalCode": "CODE_SYN_4",
+      "purchaseUnitId": "PU_SYN_4",
+      "purchaseUnitIds": [
+        "PU_SYN_4"
+      ],
+      "aliases": [
+        "Synthetic Hospital Alias 4"
+      ],
+      "salesHospitalIds": [],
+      "hospitalLevel": "SECONDARY",
+      "city": "Synthetic City 1",
+      "source": "synthetic-product-v1",
+      "sourceIds": [
+        "SRC_SYN_4"
+      ],
+      "sourceFiles": [],
+      "legacyIds": [],
+      "evidence": [],
+      "verifiedAt": "2030-03-15",
+      "authorityKey": "synthetic:3",
+      "synthetic": true
+    },
+    {
+      "id": "H_SYN_005",
+      "hospitalId": "H_SYN_005",
+      "canonicalName": "Synthetic Hospital 5",
+      "name": "Synthetic Hospital 5",
+      "hospitalCode": "CODE_SYN_5",
+      "purchaseUnitId": "PU_SYN_5",
+      "purchaseUnitIds": [
+        "PU_SYN_5"
+      ],
+      "aliases": [
+        "Synthetic Hospital Alias 5"
+      ],
+      "salesHospitalIds": [],
+      "hospitalLevel": "TERTIARY",
+      "city": "Synthetic City 2",
+      "source": "synthetic-product-v1",
+      "sourceIds": [
+        "SRC_SYN_5"
+      ],
+      "sourceFiles": [],
+      "legacyIds": [],
+      "evidence": [],
+      "verifiedAt": "2030-03-15",
+      "authorityKey": "synthetic:4",
+      "synthetic": true
+    },
+    {
+      "id": "H_SYN_006",
+      "hospitalId": "H_SYN_006",
+      "canonicalName": "Synthetic Hospital 6",
+      "name": "Synthetic Hospital 6",
+      "hospitalCode": "CODE_SYN_6",
+      "purchaseUnitId": "PU_SYN_6",
+      "purchaseUnitIds": [
+        "PU_SYN_6"
+      ],
+      "aliases": [
+        "Synthetic Hospital Alias 6"
+      ],
+      "salesHospitalIds": [],
+      "hospitalLevel": "SECONDARY",
+      "city": "Synthetic City 3",
+      "source": "synthetic-product-v1",
+      "sourceIds": [
+        "SRC_SYN_6"
+      ],
+      "sourceFiles": [],
+      "legacyIds": [],
+      "evidence": [],
+      "verifiedAt": "2030-03-15",
+      "authorityKey": "synthetic:5",
+      "synthetic": true
+    },
+    {
+      "id": "H_SYN_007",
+      "hospitalId": "H_SYN_007",
+      "canonicalName": "Synthetic Hospital 7",
+      "name": "Synthetic Hospital 7",
+      "hospitalCode": "CODE_SYN_7",
+      "purchaseUnitId": "PU_SYN_7",
+      "purchaseUnitIds": [
+        "PU_SYN_7"
+      ],
+      "aliases": [
+        "Synthetic Hospital Alias 7"
+      ],
+      "salesHospitalIds": [],
+      "hospitalLevel": "TERTIARY",
+      "city": "Synthetic City 1",
+      "source": "synthetic-product-v1",
+      "sourceIds": [
+        "SRC_SYN_7"
+      ],
+      "sourceFiles": [],
+      "legacyIds": [],
+      "evidence": [],
+      "verifiedAt": "2030-03-15",
+      "authorityKey": "synthetic:6",
+      "synthetic": true
+    },
+    {
+      "id": "H_SYN_008",
+      "hospitalId": "H_SYN_008",
+      "canonicalName": "Synthetic Hospital 8",
+      "name": "Synthetic Hospital 8",
+      "hospitalCode": "CODE_SYN_8",
+      "purchaseUnitId": "PU_SYN_8",
+      "purchaseUnitIds": [
+        "PU_SYN_8"
+      ],
+      "aliases": [
+        "Synthetic Hospital Alias 8"
+      ],
+      "salesHospitalIds": [],
+      "hospitalLevel": "SECONDARY",
+      "city": "Synthetic City 2",
+      "source": "synthetic-product-v1",
+      "sourceIds": [
+        "SRC_SYN_8"
+      ],
+      "sourceFiles": [],
+      "legacyIds": [],
+      "evidence": [],
+      "verifiedAt": "2030-03-15",
+      "authorityKey": "synthetic:7",
+      "synthetic": true
+    },
+    {
+      "id": "H_SYN_009",
+      "hospitalId": "H_SYN_009",
+      "canonicalName": "Synthetic Hospital 9",
+      "name": "Synthetic Hospital 9",
+      "hospitalCode": "CODE_SYN_9",
+      "purchaseUnitId": "PU_SYN_9",
+      "purchaseUnitIds": [
+        "PU_SYN_9"
+      ],
+      "aliases": [
+        "Synthetic Hospital Alias 9"
+      ],
+      "salesHospitalIds": [],
+      "hospitalLevel": "TERTIARY",
+      "city": "Synthetic City 3",
+      "source": "synthetic-product-v1",
+      "sourceIds": [
+        "SRC_SYN_9"
+      ],
+      "sourceFiles": [],
+      "legacyIds": [],
+      "evidence": [],
+      "verifiedAt": "2030-03-15",
+      "authorityKey": "synthetic:8",
+      "synthetic": true
+    },
+    {
+      "id": "H_SYN_010",
+      "hospitalId": "H_SYN_010",
+      "canonicalName": "Synthetic Hospital 10",
+      "name": "Synthetic Hospital 10",
+      "hospitalCode": "CODE_SYN_10",
+      "purchaseUnitId": "PU_SYN_10",
+      "purchaseUnitIds": [
+        "PU_SYN_10"
+      ],
+      "aliases": [
+        "Synthetic Hospital Alias 10"
+      ],
+      "salesHospitalIds": [],
+      "hospitalLevel": "SECONDARY",
+      "city": "Synthetic City 1",
+      "source": "synthetic-product-v1",
+      "sourceIds": [
+        "SRC_SYN_10"
+      ],
+      "sourceFiles": [],
+      "legacyIds": [],
+      "evidence": [],
+      "verifiedAt": "2030-03-15",
+      "authorityKey": "synthetic:9",
+      "synthetic": true
+    },
+    {
+      "id": "H_SYN_011",
+      "hospitalId": "H_SYN_011",
+      "canonicalName": "Synthetic Hospital 11",
+      "name": "Synthetic Hospital 11",
+      "hospitalCode": "CODE_SYN_11",
+      "purchaseUnitId": "PU_SYN_11",
+      "purchaseUnitIds": [
+        "PU_SYN_11"
+      ],
+      "aliases": [
+        "Synthetic Hospital Alias 11"
+      ],
+      "salesHospitalIds": [],
+      "hospitalLevel": "TERTIARY",
+      "city": "Synthetic City 2",
+      "source": "synthetic-product-v1",
+      "sourceIds": [
+        "SRC_SYN_11"
+      ],
+      "sourceFiles": [],
+      "legacyIds": [],
+      "evidence": [],
+      "verifiedAt": "2030-03-15",
+      "authorityKey": "synthetic:10",
+      "synthetic": true
+    },
+    {
+      "id": "H_SYN_012",
+      "hospitalId": "H_SYN_012",
+      "canonicalName": "Synthetic Hospital 12",
+      "name": "Synthetic Hospital 12",
+      "hospitalCode": "CODE_SYN_12",
+      "purchaseUnitId": "PU_SYN_12",
+      "purchaseUnitIds": [
+        "PU_SYN_12"
+      ],
+      "aliases": [
+        "Synthetic Hospital Alias 12"
+      ],
+      "salesHospitalIds": [],
+      "hospitalLevel": "SECONDARY",
+      "city": "Synthetic City 3",
+      "source": "synthetic-product-v1",
+      "sourceIds": [
+        "SRC_SYN_12"
+      ],
+      "sourceFiles": [],
+      "legacyIds": [],
+      "evidence": [],
+      "verifiedAt": "2030-03-15",
+      "authorityKey": "synthetic:11",
+      "synthetic": true
+    }
+  ],
+  "departments": [
+    {
+      "id": "D_SYN_0_0",
+      "hospitalId": "H_SYN_001",
+      "name": "Synthetic Department Shared",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_0_1",
+      "hospitalId": "H_SYN_001",
+      "name": "Synthetic Department B",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_1_0",
+      "hospitalId": "H_SYN_002",
+      "name": "Synthetic Department Shared",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_1_1",
+      "hospitalId": "H_SYN_002",
+      "name": "Synthetic Department B",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_2_0",
+      "hospitalId": "H_SYN_003",
+      "name": "Synthetic Department Shared",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_2_1",
+      "hospitalId": "H_SYN_003",
+      "name": "Synthetic Department B",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_3_0",
+      "hospitalId": "H_SYN_004",
+      "name": "Synthetic Department Shared",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_3_1",
+      "hospitalId": "H_SYN_004",
+      "name": "Synthetic Department B",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_4_0",
+      "hospitalId": "H_SYN_005",
+      "name": "Synthetic Department Shared",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_4_1",
+      "hospitalId": "H_SYN_005",
+      "name": "Synthetic Department B",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_5_0",
+      "hospitalId": "H_SYN_006",
+      "name": "Synthetic Department Shared",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_5_1",
+      "hospitalId": "H_SYN_006",
+      "name": "Synthetic Department B",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_6_0",
+      "hospitalId": "H_SYN_007",
+      "name": "Synthetic Department Shared",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_6_1",
+      "hospitalId": "H_SYN_007",
+      "name": "Synthetic Department B",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_7_0",
+      "hospitalId": "H_SYN_008",
+      "name": "Synthetic Department Shared",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_7_1",
+      "hospitalId": "H_SYN_008",
+      "name": "Synthetic Department B",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_8_0",
+      "hospitalId": "H_SYN_009",
+      "name": "Synthetic Department Shared",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_8_1",
+      "hospitalId": "H_SYN_009",
+      "name": "Synthetic Department B",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_9_0",
+      "hospitalId": "H_SYN_010",
+      "name": "Synthetic Department Shared",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_9_1",
+      "hospitalId": "H_SYN_010",
+      "name": "Synthetic Department B",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_10_0",
+      "hospitalId": "H_SYN_011",
+      "name": "Synthetic Department Shared",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_10_1",
+      "hospitalId": "H_SYN_011",
+      "name": "Synthetic Department B",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_11_0",
+      "hospitalId": "H_SYN_012",
+      "name": "Synthetic Department Shared",
+      "synthetic": true
+    },
+    {
+      "id": "D_SYN_11_1",
+      "hospitalId": "H_SYN_012",
+      "name": "Synthetic Department B",
+      "synthetic": true
+    }
+  ],
+  "employees": [
+    {
+      "id": "E_SYN_0",
+      "name": "Synthetic Employee 1",
+      "synthetic": true
+    },
+    {
+      "id": "E_SYN_1",
+      "name": "Synthetic Employee 2",
+      "synthetic": true
+    },
+    {
+      "id": "E_SYN_2",
+      "name": "Synthetic Employee 3",
+      "synthetic": true
+    },
+    {
+      "id": "E_SYN_3",
+      "name": "Synthetic Employee 4",
+      "synthetic": true
+    }
+  ],
+  "products": [
+    {
+      "id": "P_SYN_PRIMARY_A",
+      "name": "Primary Product A",
+      "role": "primary",
+      "unitPrice": 17,
+      "synthetic": true
+    },
+    {
+      "id": "P_SYN_PRIMARY_B",
+      "name": "Primary Product B",
+      "role": "primary",
+      "unitPrice": 29,
+      "synthetic": true
+    },
+    {
+      "id": "P_SYN_AUX_A",
+      "name": "Auxiliary Product A",
+      "role": "auxiliary",
+      "unitPrice": 7,
+      "synthetic": true
+    },
+    {
+      "id": "P_SYN_AUX_B",
+      "name": "Auxiliary Product B",
+      "role": "auxiliary",
+      "unitPrice": 11,
+      "synthetic": true
+    }
+  ],
+  "customers": [
+    {
+      "id": "C_SYN_0",
+      "name": "Synthetic Customer Shared",
+      "hospitalId": "H_SYN_004",
+      "departmentId": "D_SYN_3_0",
+      "employeeId": "E_SYN_1",
+      "abcd": "A",
+      "observation": "R1",
+      "synthetic": true
+    },
+    {
+      "id": "C_SYN_1",
+      "name": "Synthetic Customer Shared",
+      "hospitalId": "H_SYN_009",
+      "departmentId": "D_SYN_8_1",
+      "employeeId": "E_SYN_0",
+      "abcd": "B",
+      "observation": "R2",
+      "synthetic": true
+    },
+    {
+      "id": "C_SYN_2",
+      "name": "Synthetic Customer 3",
+      "hospitalId": "H_SYN_002",
+      "departmentId": "D_SYN_1_0",
+      "employeeId": "E_SYN_3",
+      "abcd": "C",
+      "observation": "R3",
+      "synthetic": true
+    },
+    {
+      "id": "C_SYN_3",
+      "name": "Synthetic Customer 4",
+      "hospitalId": "H_SYN_007",
+      "departmentId": "D_SYN_6_1",
+      "employeeId": "E_SYN_2",
+      "abcd": "D",
+      "observation": "R4",
+      "synthetic": true
+    },
+    {
+      "id": "C_SYN_4",
+      "name": "Synthetic Customer 5",
+      "hospitalId": "H_SYN_012",
+      "departmentId": "D_SYN_11_0",
+      "employeeId": "E_SYN_1",
+      "abcd": "A",
+      "observation": "R1",
+      "synthetic": true
+    },
+    {
+      "id": "C_SYN_5",
+      "name": "Synthetic Customer 6",
+      "hospitalId": "H_SYN_005",
+      "departmentId": "D_SYN_4_1",
+      "employeeId": "E_SYN_0",
+      "abcd": "B",
+      "observation": "R2",
+      "synthetic": true
+    },
+    {
+      "id": "C_SYN_6",
+      "name": "Synthetic Customer 7",
+      "hospitalId": "H_SYN_010",
+      "departmentId": "D_SYN_9_0",
+      "employeeId": "E_SYN_3",
+      "abcd": "C",
+      "observation": "R3",
+      "synthetic": true
+    },
+    {
+      "id": "C_SYN_7",
+      "name": "Synthetic Customer 8",
+      "hospitalId": "H_SYN_003",
+      "departmentId": "D_SYN_2_1",
+      "employeeId": "E_SYN_2",
+      "abcd": "D",
+      "observation": "R4",
+      "synthetic": true
+    }
+  ],
+  "sales": [
+    {
+      "id": "S_SYN_0",
+      "hospitalId": "H_SYN_003",
+      "employeeId": "E_SYN_0",
+      "productId": "P_SYN_PRIMARY_A",
+      "date": "2030-01-15",
+      "amount": null,
+      "boxes": null,
+      "sourceId": "SRC_SYN_SALES",
+      "synthetic": true
+    },
+    {
+      "id": "S_SYN_1",
+      "hospitalId": "H_SYN_010",
+      "employeeId": "E_SYN_1",
+      "productId": "P_SYN_PRIMARY_B",
+      "date": "2030-02-15",
+      "amount": 0,
+      "boxes": 1,
+      "sourceId": "SRC_SYN_SALES",
+      "synthetic": true
+    },
+    {
+      "id": "S_SYN_2",
+      "hospitalId": "H_SYN_005",
+      "employeeId": "E_SYN_2",
+      "productId": "P_SYN_AUX_A",
+      "date": "2030-03-15",
+      "amount": 29,
+      "boxes": 2,
+      "sourceId": "SRC_SYN_SALES",
+      "synthetic": true
+    },
+    {
+      "id": "S_SYN_3",
+      "hospitalId": "H_SYN_012",
+      "employeeId": "E_SYN_3",
+      "productId": "P_SYN_AUX_B",
+      "date": "2030-01-15",
+      "amount": 42,
+      "boxes": 3,
+      "sourceId": "SRC_SYN_SALES",
+      "synthetic": true
+    },
+    {
+      "id": "S_SYN_4",
+      "hospitalId": "H_SYN_007",
+      "employeeId": "E_SYN_0",
+      "productId": "P_SYN_PRIMARY_A",
+      "date": "2030-02-15",
+      "amount": 8,
+      "boxes": 4,
+      "sourceId": "SRC_SYN_SALES",
+      "synthetic": true
+    },
+    {
+      "id": "S_SYN_5",
+      "hospitalId": "H_SYN_002",
+      "employeeId": "E_SYN_1",
+      "productId": "P_SYN_PRIMARY_B",
+      "date": "2030-03-15",
+      "amount": 21,
+      "boxes": 0,
+      "sourceId": "SRC_SYN_SALES",
+      "synthetic": true
+    },
+    {
+      "id": "S_SYN_6",
+      "hospitalId": "H_SYN_009",
+      "employeeId": "E_SYN_2",
+      "productId": "P_SYN_AUX_A",
+      "date": "2030-01-15",
+      "amount": 34,
+      "boxes": 1,
+      "sourceId": "SRC_SYN_SALES",
+      "synthetic": true
+    },
+    {
+      "id": "S_SYN_7",
+      "hospitalId": "H_SYN_004",
+      "employeeId": "E_SYN_3",
+      "productId": "P_SYN_AUX_B",
+      "date": "2030-02-15",
+      "amount": 47,
+      "boxes": 2,
+      "sourceId": "SRC_SYN_SALES",
+      "synthetic": true
+    },
+    {
+      "id": "S_SYN_8",
+      "hospitalId": "H_SYN_011",
+      "employeeId": "E_SYN_0",
+      "productId": "P_SYN_PRIMARY_A",
+      "date": "2030-03-15",
+      "amount": 13,
+      "boxes": 3,
+      "sourceId": "SRC_SYN_SALES",
+      "synthetic": true
+    },
+    {
+      "id": "S_SYN_9",
+      "hospitalId": "H_SYN_006",
+      "employeeId": "E_SYN_1",
+      "productId": "P_SYN_PRIMARY_B",
+      "date": "2030-01-15",
+      "amount": 26,
+      "boxes": 4,
+      "sourceId": "SRC_SYN_SALES",
+      "synthetic": true
+    }
+  ],
+  "plans": [
+    {
+      "id": "PLAN_SYN_0",
+      "employeeId": "E_SYN_0",
+      "period": "2030-03",
+      "productId": "P_SYN_PRIMARY_B",
+      "target": 19,
+      "synthetic": true
+    },
+    {
+      "id": "PLAN_SYN_1",
+      "employeeId": "E_SYN_1",
+      "period": "2030-03",
+      "productId": "P_SYN_AUX_A",
+      "target": 26,
+      "synthetic": true
+    },
+    {
+      "id": "PLAN_SYN_2",
+      "employeeId": "E_SYN_2",
+      "period": "2030-03",
+      "productId": "P_SYN_AUX_B",
+      "target": 33,
+      "synthetic": true
+    },
+    {
+      "id": "PLAN_SYN_3",
+      "employeeId": "E_SYN_3",
+      "period": "2030-03",
+      "productId": "P_SYN_PRIMARY_A",
+      "target": 40,
+      "synthetic": true
+    }
+  ],
+  "activities": [
+    {
+      "id": "A_SYN_0",
+      "hospitalId": "H_SYN_002",
+      "departmentId": "D_SYN_1_0",
+      "productId": "P_SYN_PRIMARY_A",
+      "date": "2030-03-10",
+      "status": "草稿",
+      "approvalStatus": "未提交",
+      "actualExpense": null,
+      "budget": 71,
+      "synthetic": true
+    },
+    {
+      "id": "A_SYN_1",
+      "hospitalId": "H_SYN_005",
+      "departmentId": "D_SYN_4_0",
+      "productId": "P_SYN_PRIMARY_B",
+      "date": "2030-03-11",
+      "status": "待执行",
+      "approvalStatus": "已通过",
+      "actualExpense": 0,
+      "budget": 74,
+      "synthetic": true
+    },
+    {
+      "id": "A_SYN_2",
+      "hospitalId": "H_SYN_008",
+      "departmentId": "D_SYN_7_0",
+      "productId": "P_SYN_AUX_A",
+      "date": "2030-03-12",
+      "status": "已完成",
+      "approvalStatus": "已通过",
+      "actualExpense": 43.5,
+      "budget": 77,
+      "synthetic": true
+    }
+  ],
+  "visits": [
+    {
+      "id": "V_SYN_0",
+      "customerId": "C_SYN_0",
+      "hospitalId": "H_SYN_004",
+      "date": "2030-03-11",
+      "status": "planned",
+      "synthetic": true
+    },
+    {
+      "id": "V_SYN_1",
+      "customerId": "C_SYN_1",
+      "hospitalId": "H_SYN_009",
+      "date": "2030-03-12",
+      "status": "planned",
+      "synthetic": true
+    },
+    {
+      "id": "V_SYN_2",
+      "customerId": "C_SYN_2",
+      "hospitalId": "H_SYN_002",
+      "date": "2030-03-13",
+      "status": "planned",
+      "synthetic": true
+    },
+    {
+      "id": "V_SYN_3",
+      "customerId": "C_SYN_3",
+      "hospitalId": "H_SYN_007",
+      "date": "2030-03-14",
+      "status": "planned",
+      "synthetic": true
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T_SYN_0",
+      "customerId": "C_SYN_0",
+      "sourceTaskId": null,
+      "status": "pending",
+      "date": "2030-03-15",
+      "synthetic": true
+    },
+    {
+      "id": "T_SYN_1",
+      "customerId": "C_SYN_1",
+      "sourceTaskId": "T_SYN_0",
+      "status": "done",
+      "date": "2030-03-15",
+      "synthetic": true
+    },
+    {
+      "id": "T_SYN_2",
+      "customerId": "C_SYN_2",
+      "sourceTaskId": "T_SYN_1",
+      "status": "cancelled",
+      "date": "2030-03-15",
+      "synthetic": true
+    },
+    {
+      "id": "T_SYN_3",
+      "customerId": "C_SYN_3",
+      "sourceTaskId": "T_SYN_2",
+      "status": "pending",
+      "date": "2030-03-15",
+      "synthetic": true
+    }
+  ],
+  "boundaries": {
+    "sameNameHospitals": [
+      "H_SYN_001",
+      "H_SYN_002"
+    ],
+    "sameNameCustomers": [
+      "C_SYN_0",
+      "C_SYN_1"
+    ],
+    "missingIdentity": {
+      "hospitalId": null,
+      "quality": "UNRESOLVED"
+    },
+    "duplicateTasks": [
+      {
+        "id": "T_SYN_DUP",
+        "sourceTaskId": "T_SYN_0"
+      },
+      {
+        "id": "T_SYN_DUP",
+        "sourceTaskId": "T_SYN_0"
+      }
+    ],
+    "months": [
+      {
+        "month": "2030-01",
+        "value": null
+      },
+      {
+        "month": "2030-02",
+        "value": 0
+      },
+      {
+        "month": "2030-03",
+        "value": 23
+      }
+    ],
+    "fiscal": {
+      "start": "2029-10-01",
+      "endExclusive": "2030-10-01",
+      "boundaryBefore": "2029-09-30",
+      "boundaryAfter": "2029-10-01"
+    },
+    "restore": {
+      "revision": "SYN_REV_1",
+      "staleRevision": "SYN_REV_0",
+      "retainNull": true
+    },
+    "navigation": {
+      "from": "Task",
+      "to": "Customer",
+      "back": "Task",
+      "sourceTaskId": "T_SYN_0"
+    }
+  }
+}
