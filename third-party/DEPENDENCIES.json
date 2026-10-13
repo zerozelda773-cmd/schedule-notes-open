@@ -1,0 +1,354 @@
+[
+  {
+    "name": "@types/node",
+    "version": "22.20.5",
+    "license": "MIT",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/_types_node-22.20.5-LICENSE",
+        "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+      }
+    ]
+  },
+  {
+    "name": "adler-32",
+    "version": "1.3.1",
+    "license": "Apache-2.0",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/adler-32-1.3.1-LICENSE",
+        "sha256": "c542ba7851b5d39a5face477e47a27cb7c00a9759e321b66824e79718bffe1ac"
+      }
+    ]
+  },
+  {
+    "name": "cfb",
+    "version": "1.2.2",
+    "license": "Apache-2.0",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/cfb-1.2.2-LICENSE",
+        "sha256": "279ce5f639ecd1767f96948f9fbe6f0aa8145cb280cf98473fb366eab5e6de26"
+      }
+    ]
+  },
+  {
+    "name": "core-util-is",
+    "version": "1.0.3",
+    "license": "MIT",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/core-util-is-1.0.3-LICENSE",
+        "sha256": "33b734d60042d0fe0c92dd1fc1e874193a1c899ec3e276a2eb935d2d0bf5b710"
+      }
+    ]
+  },
+  {
+    "name": "crc-32",
+    "version": "1.2.2",
+    "license": "Apache-2.0",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/crc-32-1.2.2-LICENSE",
+        "sha256": "c542ba7851b5d39a5face477e47a27cb7c00a9759e321b66824e79718bffe1ac"
+      }
+    ]
+  },
+  {
+    "name": "crypto-js",
+    "version": "4.2.0",
+    "license": "MIT",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/crypto-js-4.2.0-LICENSE",
+        "sha256": "f729d14b7e1bf8adca0dcc38b93b929d14d53fcd5db56c3d1c9b2daa7aa69396"
+      }
+    ]
+  },
+  {
+    "name": "https",
+    "version": "1.0.0",
+    "license": "ISC",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [],
+    "distributionScope": "METADATA ONLY: published npm package contains package.json only; no code/assets from this package are copied or bundled; Node builtin https is not this package"
+  },
+  {
+    "name": "image-size",
+    "version": "1.2.1",
+    "license": "MIT",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/image-size-1.2.1-LICENSE",
+        "sha256": "3109783dad7527b490aabc49c3cb148573c19b41b843e70cf9388a93f3d7fccd"
+      }
+    ]
+  },
+  {
+    "name": "immediate",
+    "version": "3.0.6",
+    "license": "MIT",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/immediate-3.0.6-LICENSE.txt",
+        "sha256": "809e66de579fb7d92503848bbe6d1f348f4f6521a71e5d294fe7cc0c87a3b4ff"
+      }
+    ]
+  },
+  {
+    "name": "inherits",
+    "version": "2.0.4",
+    "license": "ISC",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/inherits-2.0.4-LICENSE",
+        "sha256": "5ffe28e7ade7d8f10d85d5337a73fd793dac5c462fb9a28fbf8c5046c7fbca3b"
+      }
+    ]
+  },
+  {
+    "name": "isarray",
+    "version": "1.0.0",
+    "license": "MIT",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/isarray-1.0.0-LICENSE",
+        "sha256": "66aa9feab8bb39aceebd69f2a357015d57ceab486d3c7a19ff8d3d4110a6d101"
+      }
+    ]
+  },
+  {
+    "name": "jszip",
+    "version": "3.10.1",
+    "license": "(MIT OR GPL-3.0-or-later)",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/jszip-3.10.1-LICENSE.markdown",
+        "sha256": "566c953c6090b1218ca6217dd7359d45dde46581968586dc607d59a78af6a9c4"
+      }
+    ]
+  },
+  {
+    "name": "lie",
+    "version": "3.3.0",
+    "license": "MIT",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/lie-3.3.0-license.md",
+        "sha256": "5c81b0caa98593408b03125efa25efe622341ed87ae55561968828cd887d64a4"
+      }
+    ]
+  },
+  {
+    "name": "lodash",
+    "version": "4.18.1",
+    "license": "MIT",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/lodash-4.18.1-LICENSE",
+        "sha256": "f71e8ed126b46346494aad5486874cd8f0aafe95092ed67d2e3cb6110f939abc"
+      }
+    ]
+  },
+  {
+    "name": "pako",
+    "version": "1.0.11",
+    "license": "(MIT AND Zlib)",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/pako-1.0.11-LICENSE",
+        "sha256": "a04665b3b2de56c66730c1f720f528175739e4104f79073614aa611da1e85539"
+      }
+    ]
+  },
+  {
+    "name": "pptxgenjs",
+    "version": "4.0.1",
+    "license": "MIT",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/pptxgenjs-4.0.1-LICENSE",
+        "sha256": "7a2bfe96150786ed1908b8e63f98ebab88875c1e79e28faff6649e0f11f77e52"
+      }
+    ]
+  },
+  {
+    "name": "process-nextick-args",
+    "version": "2.0.1",
+    "license": "MIT",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/process-nextick-args-2.0.1-license.md",
+        "sha256": "ecdccbcf39024f624ded480c01c0b25458e1eca8f26ecf040933865ce56d9a4f"
+      }
+    ]
+  },
+  {
+    "name": "queue",
+    "version": "6.0.2",
+    "license": "MIT",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/queue-6.0.2-LICENSE",
+        "sha256": "38d7c4d8410c68eeae9ce24a8b4ee2380199d6df4abb1d9c15dc70b135935fe8"
+      }
+    ]
+  },
+  {
+    "name": "readable-stream",
+    "version": "2.3.8",
+    "license": "MIT",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/readable-stream-2.3.8-LICENSE",
+        "sha256": "ec62dc96da0099b87f4511736c87309335527fb7031639493e06c95728dc8c54"
+      }
+    ]
+  },
+  {
+    "name": "safe-buffer",
+    "version": "5.1.2",
+    "license": "MIT",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/safe-buffer-5.1.2-LICENSE",
+        "sha256": "c7cc929b57080f4b9d0c6cf57669f0463fc5b39906344dfc8d3bc43426b30eac"
+      }
+    ]
+  },
+  {
+    "name": "sax",
+    "version": "1.6.1",
+    "license": "BlueOak-1.0.0",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/sax-1.6.1-LICENSE.md",
+        "sha256": "8a1af140fdfbf5afd3df27f7e662f989c5b963a300020dfafce42033cae9e004"
+      }
+    ]
+  },
+  {
+    "name": "setimmediate",
+    "version": "1.0.5",
+    "license": "MIT",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/setimmediate-1.0.5-LICENSE.txt",
+        "sha256": "c4b4ad3a5746f1f5249a6dd90396ec519264e1bb02e01e48a6522c48a3a97cb4"
+      }
+    ]
+  },
+  {
+    "name": "string_decoder",
+    "version": "1.1.1",
+    "license": "MIT",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/string_decoder-1.1.1-LICENSE",
+        "sha256": "11f2aafb37d06b3ee5bdaf06e9811141d0da05263c316f3d627f45c20d43261b"
+      }
+    ]
+  },
+  {
+    "name": "undici-types",
+    "version": "6.21.0",
+    "license": "MIT",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/undici-types-6.21.0-LICENSE",
+        "sha256": "a6db8096b2707bc0102d256917d4d33f298ba36d8c3f25de067a2b5bb379db27"
+      }
+    ]
+  },
+  {
+    "name": "util-deprecate",
+    "version": "1.0.2",
+    "license": "MIT",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/util-deprecate-1.0.2-LICENSE",
+        "sha256": "0154425673db15cdfa80ecba2c9b1f1a867f7197a006764712849bfc3a93cbb7"
+      }
+    ]
+  },
+  {
+    "name": "xlsx-populate",
+    "version": "1.21.0",
+    "license": "MIT",
+    "origin": "PUBLIC_NPM_PINNED_INSTALL",
+    "noticeFiles": [
+      {
+        "path": "third-party/xlsx-populate-1.21.0-LICENSE",
+        "sha256": "a78313ab78e9455ce919a58748cee8f18b6907ba492ecb75f813f5d79dafa6d0"
+      }
+    ]
+  },
+  {
+    "name": "playwright",
+    "version": "1.55.1",
+    "license": "Apache-2.0",
+    "origin": "PINNED_PUBLIC_DEV_DEPENDENCY",
+    "noticeFiles": [
+      {
+        "path": "third-party/playwright-1.55.1-LICENSE",
+        "sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb"
+      },
+      {
+        "path": "third-party/playwright-1.55.1-NOTICE",
+        "sha256": "6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d"
+      }
+    ]
+  },
+  {
+    "name": "playwright-core",
+    "version": "1.55.1",
+    "license": "Apache-2.0",
+    "origin": "PINNED_PUBLIC_DEV_DEPENDENCY",
+    "noticeFiles": [
+      {
+        "path": "third-party/playwright-core-1.55.1-LICENSE",
+        "sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb"
+      },
+      {
+        "path": "third-party/playwright-core-1.55.1-NOTICE",
+        "sha256": "6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d"
+      }
+    ]
+  },
+  {
+    "name": "yaml",
+    "version": "2.8.1",
+    "license": "ISC",
+    "origin": "PINNED_PUBLIC_DEV_DEPENDENCY",
+    "noticeFiles": [
+      {
+        "path": "third-party/yaml-2.8.1-LICENSE",
+        "sha256": "5bba27375d93e9119f76c1015f7672cf9ad5f70952296e0842fb2243d6376869"
+      }
+    ]
+  }
+]

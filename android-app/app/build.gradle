@@ -1,0 +1,40 @@
+plugins {
+    id 'com.android.application'
+}
+android {
+    namespace 'org.synthetic.schedulenotes'
+    sourceSets { main { assets.srcDirs = ['../../.generated/android-assets'] } }
+    compileSdk 35
+    buildFeatures { buildConfig true }
+    testOptions {
+        unitTests.all {
+            systemProperty 'pptFixtures', rootProject.file('../.generated/native-fixtures').absolutePath
+            systemProperty 'pptSaved', rootProject.file('../.generated/native-saved').absolutePath
+            systemProperty 'activityTemplateFixtures', rootProject.file('../assets/activity-templates').absolutePath
+        }
+    }
+    defaultConfig {
+        applicationId 'org.synthetic.schedulenotes'
+        minSdk 26
+        targetSdk 35
+        manifestPlaceholders = [appLabel: 'Schedule Notes Synthetic Demo']
+        versionCode 1
+        versionName '0.0.0-local-synthetic'
+    }
+    buildTypes {
+        debug { applicationIdSuffix '.validation' }
+        publicValidation {
+            initWith debug
+            applicationIdSuffix '.publicvalidation'
+            signingConfig null
+            matchingFallbacks = ['debug']
+        }
+    }
+}
+dependencies {
+    implementation 'androidx.webkit:webkit:1.12.1'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.16'
+}
+// Public build uses installed/CI Gradle, never the quarantined wrapper JAR.
+// No production signer, app identity, updater or credential overlay is present.

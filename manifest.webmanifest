@@ -1,0 +1,16 @@
+{
+  "name": "工作进度台",
+  "short_name": "进度台",
+  "description": "分类记录、进度追踪、工作日晨报和周五复盘",
+  "lang": "zh-CN",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#f4f1ea",
+  "theme_color": "#315c52",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

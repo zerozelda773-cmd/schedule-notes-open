@@ -1,0 +1,16 @@
+{
+  "completeProductEquivalence": "PASS_WITH_DECLARED_PUBLIC_VARIANTS",
+  "ordinaryLocalBuild": "PASS / WEB_ONLY",
+  "nativeReality": "LOCAL_REALITY_GATE / distinct from unsigned SDK build",
+  "productionSignerUpdater": "EXCLUDED",
+  "ocr": "INTENTIONALLY_PUBLIC_DEGRADED",
+  "exactPrivateTemplates": "INTENTIONALLY_PUBLIC_DEGRADED",
+  "legacyValidationCoverage": "Accepted generic capability scope and specified regression suites, including editing draft recovery; no organization-specific asset/template or device claim",
+  "missingGatesMustNotBeSilentlyGreen": true,
+  "fullProductGate": "LOCAL_VALIDATION_PASS / hosted CI not run",
+  "thirdPartyLicenseClosure": "CLEAR / 106 actual locked source packages with complete notice basis; no historical bundle inputs",
+  "publicBootstrap": "Sanitized public source bootstrap; actual hosted results are recorded by Public CI",
+  "nativeCompile": "UNSIGNED_TEST_BUILD / Java baseline plus draft namespace isolation pass; device reality remains separate",
+  "identityC1C4": "20 current public synthetic semantic contracts PASS",
+  "draftBoundary": "Dedicated versioned editing namespace; CREATE no formal ID before successful save, EDIT source identity preserved"
+}

@@ -1,0 +1,627 @@
+{
+  "version": "public-source-manifest-bootstrap",
+  "scope": "Public source and license only; self hash is bound by the Git tree; excludes generated build outputs, caches, local data and credentials",
+  "synthetic": "synthetic-product-v1",
+  "files": [
+    {
+      "path": ".env.example",
+      "sha256": "5a64e108b490a9e3706cababa5f8c3b78195b4ffdc1ebcfd02cb8f874535cf53"
+    },
+    {
+      "path": ".github/workflows/public-ci.yml",
+      "sha256": "209d2d756f2a9b8ca1b0023a4f82d211f6309ead3d39efaf0961767f852fddb5"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "20f66a2e4a1d69396cb12fef503297fb079403511730ef2f5c14e679d6b84a7b"
+    },
+    {
+      "path": "activity-center.js",
+      "sha256": "6a0264f9717be74c44741c8c83e4efeb0607db6d2bcac58e518d88ab94acd249"
+    },
+    {
+      "path": "activity-draft-store.js",
+      "sha256": "96ceb17129351782bba85a94fd434adc41e8661dcc0418d78085777e9e08e596"
+    },
+    {
+      "path": "activity-draft-ui.js",
+      "sha256": "94863aa16cdeffd8d9a84c9620710e952b152feb6e7b148ac777d8da3d79544c"
+    },
+    {
+      "path": "activity-task-adapter.js",
+      "sha256": "258f1c70bdbd2fbce2452fd84d6d95187bd9b0d8e60b6db0d322221bb2895501"
+    },
+    {
+      "path": "activity-template-assets.js",
+      "sha256": "a072faad3719e8f1077485bd592e277409497dc120d41a2363ea32dddbf13239"
+    },
+    {
+      "path": "activity-ui-v2.css",
+      "sha256": "11d8cb73fcd57e13bd104516da74f7d2b586bf253efbe928ae2c3df4cfd416a2"
+    },
+    {
+      "path": "android-app/app/build.gradle",
+      "sha256": "2ab4f9bb99f7b74bead2ec0d8b8af2ee9bfdf246642f13c03110f78a1eea9240"
+    },
+    {
+      "path": "android-app/app/src/main/AndroidManifest.xml",
+      "sha256": "0e990812186e898f795ef022f8aee640d6dac154cbea30288c1f402406ae46da"
+    },
+    {
+      "path": "android-app/app/src/main/java/org/synthetic/schedulenotes/MainActivity.java",
+      "sha256": "0c9515ee5955f83a4ddd8f7403df74f39008e0bb6dff509ee8349186ec34b1e7"
+    },
+    {
+      "path": "android-app/app/src/main/java/org/synthetic/schedulenotes/MorningBriefSpeaker.java",
+      "sha256": "43c7d899e7595c068d0db47ad0e651a35c2fc60218872b1d2430b26806d3b1d7"
+    },
+    {
+      "path": "android-app/app/src/main/java/org/synthetic/schedulenotes/PptxDocumentSaver.java",
+      "sha256": "6836bdbb2e37f0573764948a930cfe0744f4c06654b1fc016b7afeb76889e410"
+    },
+    {
+      "path": "android-app/app/src/main/java/org/synthetic/schedulenotes/PptxTransferBuffer.java",
+      "sha256": "a68e9b46f8c0c7e1dda1372ca270be5091354e19304ed772e94f77396a97ab84"
+    },
+    {
+      "path": "android-app/app/src/main/java/org/synthetic/schedulenotes/SecureCredentialStore.java",
+      "sha256": "fe3e2bb11818589d54f4f8f5bbb53cca650f4f2073db97e8f85e4af33cb13f93"
+    },
+    {
+      "path": "android-app/app/src/main/java/org/synthetic/schedulenotes/SharedStateStore.java",
+      "sha256": "803a6e70b3bdac05d7ccdd931c46c054b409a9d589e73999655149c0e8c1822d"
+    },
+    {
+      "path": "android-app/app/src/main/java/org/synthetic/schedulenotes/TrustedWebPolicy.java",
+      "sha256": "d73e872e9b4348de4bf08234ccd964fb4ea94bddf82215570b31492b9bbf04f6"
+    },
+    {
+      "path": "android-app/app/src/main/java/org/synthetic/schedulenotes/UpdateFileProvider.java",
+      "sha256": "415b4a71ddc26bf91d5093fb095e38d39959a49027ab257519c74be0851f203d"
+    },
+    {
+      "path": "android-app/app/src/main/java/org/synthetic/schedulenotes/UpdateInstaller.java",
+      "sha256": "50856b0f1f87e72af8bae59404f48561546f865b096abd369498135333757fe5"
+    },
+    {
+      "path": "android-app/app/src/main/res/drawable/app_icon.xml",
+      "sha256": "57338c691af875fa258090f2fac6186f8a483ae596a39b6b2cf29a85c7155194"
+    },
+    {
+      "path": "android-app/app/src/main/res/values/styles.xml",
+      "sha256": "1e360f7ed9753408da32a44d2bac3a11e08041579d34849637eab101ff1695f6"
+    },
+    {
+      "path": "android-app/app/src/test/java/org/synthetic/schedulenotes/ActivityDocumentSaverTest.java",
+      "sha256": "4f76b03a9da890076e152c01d4df8b71e35b017bb50f14d52f84eacca5949d97"
+    },
+    {
+      "path": "android-app/app/src/test/java/org/synthetic/schedulenotes/PptxDocumentSaverTest.java",
+      "sha256": "2e294cdc249b126e533fac64a42c8207f3615a6fb846f9bf62fd91c96e1a4ed9"
+    },
+    {
+      "path": "android-app/app/src/test/java/org/synthetic/schedulenotes/PptxTransferBufferTest.java",
+      "sha256": "9747555e5ede35607e30c4b339910bd099d7a1c9bade5af850789f6f6aed0ab6"
+    },
+    {
+      "path": "android-app/app/src/test/java/org/synthetic/schedulenotes/SharedStateStoreTest.java",
+      "sha256": "2b07332d4a5e9580ce88b957d5cab600be042fa6a3cefda797a781234d5a3b5c"
+    },
+    {
+      "path": "android-app/app/src/test/java/org/synthetic/schedulenotes/TrustedWebPolicyTest.java",
+      "sha256": "cba38d3dae8aa9d6ec9df165b6a8d48ed9a8aff021e8342c020abd58bf6892aa"
+    },
+    {
+      "path": "android-app/build.gradle",
+      "sha256": "c3c0cf04da0fc239f391c774554d97d890018ab6e37e87cc62f6070d0c8c9909"
+    },
+    {
+      "path": "android-app/gradle.properties",
+      "sha256": "8097d687b525291028e82bcc3e166f04c064375747cc8556294709dd29140ada"
+    },
+    {
+      "path": "android-app/gradle/wrapper/gradle-wrapper.properties",
+      "sha256": "3d91f0932da99885c41e9dc4e85c9f9a2d3bfef4f0ad87473014dc0827a94884"
+    },
+    {
+      "path": "android-app/gradlew",
+      "sha256": "a3648413b47ef77af21d5ebc36c687c7d103aaef3e17f33de7d4f080a6f300a3"
+    },
+    {
+      "path": "android-app/gradlew.bat",
+      "sha256": "2209f919a22528af59a2af2ad97e8d056cca18e39f7d87aa3fd549a73b180150"
+    },
+    {
+      "path": "android-app/PARTIAL.md",
+      "sha256": "1f793a9469b3cae56e574e8437a71ffaf068e080d58861eca2049d1b6d116b3c"
+    },
+    {
+      "path": "android-app/settings.gradle",
+      "sha256": "c95861a2db3cd96832c3ef4d2644b631ca7481cc87bc1c89a11d00e0db5e68cb"
+    },
+    {
+      "path": "android-app/version.properties",
+      "sha256": "be82e9b85c4fc471a6916df4efae99d74b6f42fa1adadf320fd3161c4d50d563"
+    },
+    {
+      "path": "android-native-adapter.js",
+      "sha256": "48f7b496026f981473cc3f53152bc955e8738fc0b7867fa49e334bac9a5cfcae"
+    },
+    {
+      "path": "app.js",
+      "sha256": "513218855bb4c92f26e0f6d72cce57fb6d18230aa18dd4d16790595899c45ce8"
+    },
+    {
+      "path": "assets/activity-templates/academic-request.docx",
+      "sha256": "1282dc2b98fa3035587d61c1556e38ba617ee189fe4aaa977f291e40d536fa54"
+    },
+    {
+      "path": "assets/activity-templates/department-meeting.xlsx",
+      "sha256": "925ce85d5a13970b9abd750b602f59c8fbea2ee5f4dc1edd7136aab3bcb68426"
+    },
+    {
+      "path": "build-files.json",
+      "sha256": "06d97df25a7704c86724643c4c96b2f5ad48f107551aa47eaae4262b12d2f6a8"
+    },
+    {
+      "path": "cloud-config.example.js",
+      "sha256": "730ee8cdc935e50c68428458ad48be3ccbd098eccf888155bb4b829b81bbd6c2"
+    },
+    {
+      "path": "cloud-config.js",
+      "sha256": "dc9ba4b9080b19e6af11f91c44c48f6be9ec2f5c9a491acfc3feb8a533ac7bc5"
+    },
+    {
+      "path": "cloud-sync.js",
+      "sha256": "85e03786f2b2c7949544b2a2aee91b5ab7d8c11c362d56a88590a11e7345fb4d"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "sha256": "b16df00c9fff24a3327b9a7720cd6a43165408130a4a2461a91a2bfb9ca4fafa"
+    },
+    {
+      "path": "customer-profile/customer-profile.css",
+      "sha256": "caefd2e8953a566d5c1d280a8627b5209986249e77bae07167cd7ae0df5cea2a"
+    },
+    {
+      "path": "customer-profile/customer-profile.js",
+      "sha256": "a6b01e259e6fbcbe4b0557cd65e218cd9790857b870f71f6fc7ea6b9189d0ce1"
+    },
+    {
+      "path": "customer-upgrade-adapter.js",
+      "sha256": "a9acb47404b9109721ce6a9b2eee2dfcb7eb3994f2ea5b07d22af2e65214e76b"
+    },
+    {
+      "path": "dashboard-v2.js",
+      "sha256": "1c471be7a419811a379d50da4070306fcc3a19a9c9797e6a98820368e6052b9c"
+    },
+    {
+      "path": "DECLARED-PUBLIC-VARIANTS.md",
+      "sha256": "51251aeceb4075c29aa12b42e4c4c4fffa9dc72bdac647987e000f7150e0f1ac"
+    },
+    {
+      "path": "DEGRADATIONS.md",
+      "sha256": "c6a811523aa6982c417025d65798cfa4bf319a8316896d0d2a3ef7a0021a9ef1"
+    },
+    {
+      "path": "deletion-policy.js",
+      "sha256": "f09f2cd66ae66acd5016ed24bb59ae8eccfc73ea26ce8781e46fe5b1ea44485d"
+    },
+    {
+      "path": "department-identity.js",
+      "sha256": "976b61500f26fe5b2ca3ad1f234fec4de90d8617882f760190ff4f8a3e546289"
+    },
+    {
+      "path": "directory-data.example.js",
+      "sha256": "f997f7f715a4f45b1493330795402ccf5a54dabd9172e9e8489c5f2faa297327"
+    },
+    {
+      "path": "directory-data.js",
+      "sha256": "0db4632983280f217ac84ca91dda21481a6f0ee4da3e53d6cc421eaca92a9d6c"
+    },
+    {
+      "path": "excel-local-reader.js",
+      "sha256": "8615f02a26120a1150427c7600eaadd6608522c4c1520de1e9c49ed31e67ff5e"
+    },
+    {
+      "path": "fixtures/synthetic-v1.cjs",
+      "sha256": "376f300f8ca0ee4aebb7e5b7583f99f02285ceb9f463fba62f05b8d6379cdba9"
+    },
+    {
+      "path": "fixtures/synthetic-v1.json",
+      "sha256": "4c1a00b59b436c7fa4defbf04e30816ce544aa6b669037607fe1db014a78dc90"
+    },
+    {
+      "path": "four-three-plan-adapter.js",
+      "sha256": "91c97948bfeb18bd4bb5f405d244b61698ca8470795793a15e39541eb340cbec"
+    },
+    {
+      "path": "full-equivalence-status.json",
+      "sha256": "978da599d11369e9f056879ecc1f3cf29ebff963e8d21b40b8a3dc5947b90793"
+    },
+    {
+      "path": "hospital-identity.js",
+      "sha256": "88b55e59bb5bce7db9954845c05aecb7f9211bb946d1465b96495836b8cf4bc0"
+    },
+    {
+      "path": "hospital-maintenance-adapter.js",
+      "sha256": "e6e72d7eb8dcb1a65731b890f1a87c0fccce7ebcfcea425e16adf5e799c9a0e3"
+    },
+    {
+      "path": "hospital-master.js",
+      "sha256": "36479e12dd0d5ce1c28b92b2fbac22cc49eddfe39ab9034609ea8ff8bcb1406e"
+    },
+    {
+      "path": "icon.svg",
+      "sha256": "38a22d816c0724efda8933241fbf30197b94e0ad250dc561649cd620593fff06"
+    },
+    {
+      "path": "index.html",
+      "sha256": "f7b799acde70f430f69926773947f4b02057dca6dafc19da30b12cfdc222d605"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "local-data/.gitignore",
+      "sha256": "aae815b9313ef60fb99d51bec324f3de1cea5256d6bbf58a660578b3e2d5815c"
+    },
+    {
+      "path": "local-data/README.md",
+      "sha256": "621d8e6e4609ef42e2f7fe5c12ef1b6637f8b8eeb01ec4c6ad1665474aca168d"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "sha256": "4891e3617567beff1ded83c53b10b9fc0f7d397a8105172f19e673fc4830ac30"
+    },
+    {
+      "path": "NOTICE",
+      "sha256": "d0fdf9e9fcff527744481a9f65058285891df7cd8b2004ecc8bd128d0d86bb27"
+    },
+    {
+      "path": "NOTICE.md",
+      "sha256": "83a550b2f87bac966e2b915cd45e6d756bca3099c82bc862a850cac6bb612496"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "03405882bc6f7d9f19d31150d5d8298383b1fd45b257ae9b646d615ecc148fb9"
+    },
+    {
+      "path": "package.json",
+      "sha256": "ec3c241d604cc01939d4ac9e5225de31b239ee046ffeca7e3a23560eca76f827"
+    },
+    {
+      "path": "product-registry.js",
+      "sha256": "cd8b3ddfc25234d097deeda05853fd5f97769f3c207d614b726f83ea5901f17b"
+    },
+    {
+      "path": "public-adapters/crypto.cjs",
+      "sha256": "47fabc5739ce248d430488224a32e7515f6ea60d370e2febaad80ef55cdcd3fc"
+    },
+    {
+      "path": "public-adapters/populate.cjs",
+      "sha256": "52292991db778bc74ef119d80558a5d135af3ae4b586dfdd3bb7bb374553d5c2"
+    },
+    {
+      "path": "public-adapters/pptx.cjs",
+      "sha256": "8d032e6b0deddabaab63342500da7a3c336cca853d33ad6d200626e879167f18"
+    },
+    {
+      "path": "public-adapters/sheetjs.cjs",
+      "sha256": "581a70cc0f9e89c9498e892938cff9ee7b86d334ab85d56c63fc9bbd5000520f"
+    },
+    {
+      "path": "public-runtime-config.js",
+      "sha256": "b668987c5a359953815209397fcdddca21c5cc232f4d3be9ff6a2b3bc16ba275"
+    },
+    {
+      "path": "public-synthetic-data.js",
+      "sha256": "e4f9bb2349206ffc89cce95b7fe00dc2370d6edbbb430e15d7a4b3d0969d163d"
+    },
+    {
+      "path": "quarterly-ppt.js",
+      "sha256": "05d0c6123b011609e333db95b47a218b85a36edda524fbc9296d129075c4826a"
+    },
+    {
+      "path": "README.md",
+      "sha256": "b16ba8270d8d16944f4258e0695a0e7f70db8172588c4728cc058255ada5ebf3"
+    },
+    {
+      "path": "reporting.js",
+      "sha256": "9064aa7c01ee44e49713e22b201b81ae6f3fb3c2a9192e3229d9bd1969c433f1"
+    },
+    {
+      "path": "sales-import-adapter.js",
+      "sha256": "2852903dceba90fd9d3bd506661aa4789affc229d3eea56773740091650b50ab"
+    },
+    {
+      "path": "scripts/android-assets.cjs",
+      "sha256": "cd0fb1b1f5bc44aff5b621a5c3fb8b75945017b8f87bd78da31649dceaf173e4"
+    },
+    {
+      "path": "scripts/browser-capabilities.cjs",
+      "sha256": "60b2343afb66ab76cfde89cfa75f03246fa7defb6e4c8a4ccbb5eb26453d8d0c"
+    },
+    {
+      "path": "scripts/browser-draft-recovery.cjs",
+      "sha256": "788a21071e2bbd3deedfddc1fe500623d2fcd185997ca600d6ccc62e4d68150c"
+    },
+    {
+      "path": "scripts/browser-equivalence.cjs",
+      "sha256": "778f6729e5497511eb1a49dd234ca14b2570352a74999e0bf7ec1800ed882d66"
+    },
+    {
+      "path": "scripts/browser-test.cjs",
+      "sha256": "c63ec599ccc9f778d871c91241f5c145e7efc6f516bb7324b9f874c1de97cc64"
+    },
+    {
+      "path": "scripts/build-dependencies.cjs",
+      "sha256": "823942bf3d34e954684c51464cbf9dbfb4f085e5234e179c5ec09a5e42593ee2"
+    },
+    {
+      "path": "scripts/build-notices.cjs",
+      "sha256": "a6710832ddf3f48c186283bc62feaad8471bb8f7a2de64d6b6c8de9d7d749a3d"
+    },
+    {
+      "path": "scripts/build.cjs",
+      "sha256": "2979cc08fba4cb3c9f479e2babc2e0a06b758350b2603c9af39291750e18990f"
+    },
+    {
+      "path": "scripts/full-equivalence-gate.cjs",
+      "sha256": "6c4e93e3d6d76b651e2ca06e4878a9bac8f22725614692cec2b0745304e6c4b3"
+    },
+    {
+      "path": "scripts/generate-documents.cjs",
+      "sha256": "80a341eb4eeefa1dc439f2929510eed24bae8510ff8c90db1cf6463cb6e50baa"
+    },
+    {
+      "path": "scripts/native-test-fixtures.cjs",
+      "sha256": "a2a464d8902415d4be34c1cc6f788bbdf60bb388c4fba9e9c63146e1f8e5e883"
+    },
+    {
+      "path": "scripts/public-safety.cjs",
+      "sha256": "30ece7938d79fb5c6a58249d48a52ae267413db068bf45bb2fa05689ad743de1"
+    },
+    {
+      "path": "scripts/workflow-check.cjs",
+      "sha256": "8580e9ddfc8211fe17d0d06b56a52267280b7787ddade046dc01df2ec4d66bef"
+    },
+    {
+      "path": "SECURITY.md",
+      "sha256": "21de9114f2ab854719eb92114728c88b4f9e233f8a16117c059428769eaa4723"
+    },
+    {
+      "path": "server.js",
+      "sha256": "bb2c784b02ca3b7903e6acdb3e76b0a42aecaa58f2a5e0445f640c23dbec593e"
+    },
+    {
+      "path": "shared-persistence.js",
+      "sha256": "7bd06fff3e1d633cafbea2da47d1e97a411372a187e7f14f1721aef648e8813d"
+    },
+    {
+      "path": "smart-sheet-adapter.js",
+      "sha256": "e8263153c775f8a4e2eecc97dba8233d90255cc9267324af10c6e37b941455fc"
+    },
+    {
+      "path": "styles.css",
+      "sha256": "c07b4aa19de0a08e6139634a687bf93bf3633fd629012a61b81db010f6cfe14e"
+    },
+    {
+      "path": "sw.js",
+      "sha256": "c6de179f98a2be51a12d21001a7c669756591481f9bafa4f475ed78d3b78c519"
+    },
+    {
+      "path": "task-progress-adapter.js",
+      "sha256": "46df49f78d6c34ec81dbcebeec66afc360aec3daada6211957befa978ec87b04"
+    },
+    {
+      "path": "task-progress-v2.js",
+      "sha256": "fe508359d568b7c48f8cf97b49e4a69244b42fad304573cfdfbc484edb82396f"
+    },
+    {
+      "path": "tests/activity-documents.test.cjs",
+      "sha256": "f43c4c57a344b62b53869121af94dea764e6f08f238608111b7b25eb04c8e17c"
+    },
+    {
+      "path": "tests/activity-draft-store.test.cjs",
+      "sha256": "a31f7b9733f6cfc571b5890959356337410b223a849fdda30ca88e14cb2c84b3"
+    },
+    {
+      "path": "tests/capability-paths.test.cjs",
+      "sha256": "f92180d6b5bc7011698120cd6a45ad0417e5c295201c3828dc2c5e2f84691374"
+    },
+    {
+      "path": "tests/documents.test.cjs",
+      "sha256": "af5ad469b63c633bc992e8e3aecb293b563b032aa8e73c534b0ee2f6d218b547"
+    },
+    {
+      "path": "tests/engine-load.test.cjs",
+      "sha256": "9a8318595b17ae16086adcb6930658fcd1188d6bcc5491bdfa1adc1a70d6f5bc"
+    },
+    {
+      "path": "tests/focused-contracts.test.cjs",
+      "sha256": "bdc00d695092e91d0350c64ba210eef98ed89ceaab67d3edb8d9f9d75f7847bc"
+    },
+    {
+      "path": "tests/hospital-universe.test.cjs",
+      "sha256": "6af4e257aae7008dc46bdd697a156d1f3c5ae368446f7de0fcac98d80639ed12"
+    },
+    {
+      "path": "tests/identity-public-equivalence.test.cjs",
+      "sha256": "c9be8b0c980237b514982e3881207b6e7b660217d7f9757c83b0706434d2679f"
+    },
+    {
+      "path": "tests/product.test.cjs",
+      "sha256": "8234e2a124997a189ef7f06d6e531de5a4914a55d233a576c04b5ffe08a32277"
+    },
+    {
+      "path": "tests/synthetic.test.cjs",
+      "sha256": "da924f574de54b5a92f0d26c378db783d78c871383981c46b7a899a9915c7b27"
+    },
+    {
+      "path": "THIRD-PARTY-NOTICES-DRAFT.md",
+      "sha256": "f1407da95dd502db176363c906f34a01315bf36843ce3c6922d259b45094a4d1"
+    },
+    {
+      "path": "THIRD-PARTY.md",
+      "sha256": "e4a91c241418421fdedce5289cbbe32944b21c0a26ca01a8c50bcfe6fa91ad71"
+    },
+    {
+      "path": "third-party/_types_node-22.20.5-LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+    },
+    {
+      "path": "third-party/adler-32-1.3.1-LICENSE",
+      "sha256": "c542ba7851b5d39a5face477e47a27cb7c00a9759e321b66824e79718bffe1ac"
+    },
+    {
+      "path": "third-party/Apache-2.0.txt",
+      "sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb"
+    },
+    {
+      "path": "third-party/cfb-1.2.2-LICENSE",
+      "sha256": "279ce5f639ecd1767f96948f9fbe6f0aa8145cb280cf98473fb366eab5e6de26"
+    },
+    {
+      "path": "third-party/core-util-is-1.0.3-LICENSE",
+      "sha256": "33b734d60042d0fe0c92dd1fc1e874193a1c899ec3e276a2eb935d2d0bf5b710"
+    },
+    {
+      "path": "third-party/crc-32-1.2.2-LICENSE",
+      "sha256": "c542ba7851b5d39a5face477e47a27cb7c00a9759e321b66824e79718bffe1ac"
+    },
+    {
+      "path": "third-party/crypto-js-4.2.0-LICENSE",
+      "sha256": "f729d14b7e1bf8adca0dcc38b93b929d14d53fcd5db56c3d1c9b2daa7aa69396"
+    },
+    {
+      "path": "third-party/DEPENDENCIES.json",
+      "sha256": "ff59661dd173db75482178dd28cb6f943de2800c041b1b31d47662dc71944705"
+    },
+    {
+      "path": "third-party/image-size-1.2.1-LICENSE",
+      "sha256": "3109783dad7527b490aabc49c3cb148573c19b41b843e70cf9388a93f3d7fccd"
+    },
+    {
+      "path": "third-party/immediate-3.0.6-LICENSE.txt",
+      "sha256": "809e66de579fb7d92503848bbe6d1f348f4f6521a71e5d294fe7cc0c87a3b4ff"
+    },
+    {
+      "path": "third-party/inherits-2.0.4-LICENSE",
+      "sha256": "5ffe28e7ade7d8f10d85d5337a73fd793dac5c462fb9a28fbf8c5046c7fbca3b"
+    },
+    {
+      "path": "third-party/isarray-1.0.0-LICENSE",
+      "sha256": "66aa9feab8bb39aceebd69f2a357015d57ceab486d3c7a19ff8d3d4110a6d101"
+    },
+    {
+      "path": "third-party/jszip-3.10.1-LICENSE.markdown",
+      "sha256": "566c953c6090b1218ca6217dd7359d45dde46581968586dc607d59a78af6a9c4"
+    },
+    {
+      "path": "third-party/lie-3.3.0-license.md",
+      "sha256": "5c81b0caa98593408b03125efa25efe622341ed87ae55561968828cd887d64a4"
+    },
+    {
+      "path": "third-party/lodash-4.18.1-LICENSE",
+      "sha256": "f71e8ed126b46346494aad5486874cd8f0aafe95092ed67d2e3cb6110f939abc"
+    },
+    {
+      "path": "third-party/pako-1.0.11-LICENSE",
+      "sha256": "a04665b3b2de56c66730c1f720f528175739e4104f79073614aa611da1e85539"
+    },
+    {
+      "path": "third-party/playwright-1.55.1-LICENSE",
+      "sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb"
+    },
+    {
+      "path": "third-party/playwright-1.55.1-NOTICE",
+      "sha256": "6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d"
+    },
+    {
+      "path": "third-party/playwright-core-1.55.1-LICENSE",
+      "sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb"
+    },
+    {
+      "path": "third-party/playwright-core-1.55.1-NOTICE",
+      "sha256": "6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d"
+    },
+    {
+      "path": "third-party/pptxgenjs-4.0.1-LICENSE",
+      "sha256": "7a2bfe96150786ed1908b8e63f98ebab88875c1e79e28faff6649e0f11f77e52"
+    },
+    {
+      "path": "third-party/process-nextick-args-2.0.1-license.md",
+      "sha256": "ecdccbcf39024f624ded480c01c0b25458e1eca8f26ecf040933865ce56d9a4f"
+    },
+    {
+      "path": "third-party/queue-6.0.2-LICENSE",
+      "sha256": "38d7c4d8410c68eeae9ce24a8b4ee2380199d6df4abb1d9c15dc70b135935fe8"
+    },
+    {
+      "path": "third-party/readable-stream-2.3.8-LICENSE",
+      "sha256": "ec62dc96da0099b87f4511736c87309335527fb7031639493e06c95728dc8c54"
+    },
+    {
+      "path": "third-party/RUNTIME-SBOM.json",
+      "sha256": "4cd65d9e2e03d8d1d06cbf545d75bd6d81463375e86b4ead69822a9de9463b04"
+    },
+    {
+      "path": "third-party/safe-buffer-5.1.2-LICENSE",
+      "sha256": "c7cc929b57080f4b9d0c6cf57669f0463fc5b39906344dfc8d3bc43426b30eac"
+    },
+    {
+      "path": "third-party/sax-1.6.1-LICENSE.md",
+      "sha256": "8a1af140fdfbf5afd3df27f7e662f989c5b963a300020dfafce42033cae9e004"
+    },
+    {
+      "path": "third-party/setimmediate-1.0.5-LICENSE.txt",
+      "sha256": "c4b4ad3a5746f1f5249a6dd90396ec519264e1bb02e01e48a6522c48a3a97cb4"
+    },
+    {
+      "path": "third-party/string_decoder-1.1.1-LICENSE",
+      "sha256": "11f2aafb37d06b3ee5bdaf06e9811141d0da05263c316f3d627f45c20d43261b"
+    },
+    {
+      "path": "third-party/undici-types-6.21.0-LICENSE",
+      "sha256": "a6db8096b2707bc0102d256917d4d33f298ba36d8c3f25de067a2b5bb379db27"
+    },
+    {
+      "path": "third-party/util-deprecate-1.0.2-LICENSE",
+      "sha256": "0154425673db15cdfa80ecba2c9b1f1a867f7197a006764712849bfc3a93cbb7"
+    },
+    {
+      "path": "third-party/xlsx-populate-1.21.0-LICENSE",
+      "sha256": "a78313ab78e9455ce919a58748cee8f18b6907ba492ecb75f813f5d79dafa6d0"
+    },
+    {
+      "path": "third-party/yaml-2.8.1-LICENSE",
+      "sha256": "5bba27375d93e9119f76c1015f7672cf9ad5f70952296e0842fb2243d6376869"
+    },
+    {
+      "path": "vendor/crypto-js-LICENSE.txt",
+      "sha256": "f729d14b7e1bf8adca0dcc38b93b929d14d53fcd5db56c3d1c9b2daa7aa69396"
+    },
+    {
+      "path": "vendor/pptxgenjs-LICENSE.txt",
+      "sha256": "7a2bfe96150786ed1908b8e63f98ebab88875c1e79e28faff6649e0f11f77e52"
+    },
+    {
+      "path": "vendor/SheetJS-LICENSE.txt",
+      "sha256": "4d2a38ac35cda06a555c84074a819d413339cd3691b822cae50f8f322fe01f64"
+    },
+    {
+      "path": "vendor/tesseract/tesseract.min.js",
+      "sha256": "2a1de3171637c809344f104f98cddac846cca52700f6e92393768882843ab334"
+    },
+    {
+      "path": "vendor/xlsx-populate-LICENSE.txt",
+      "sha256": "a78313ab78e9455ce919a58748cee8f18b6907ba492ecb75f813f5d79dafa6d0"
+    },
+    {
+      "path": "workspace-navigation.js",
+      "sha256": "35e19a2e54703b36d123f09c76985bd2045c54e2c9fac93c5379d28e45eb2df5"
+    }
+  ]
+}
