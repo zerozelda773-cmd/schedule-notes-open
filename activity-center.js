@@ -17,17 +17,18 @@
   const PRODUCT_TOPICS = {
     "Primary Product A": "Primary Product A\u7684\u4E34\u5E8A\u5E94\u7528\u75C5\u4F8B\u5206\u4EAB",
     "Primary Product B": "Primary Product B\u5728\u7BA1\u9972\u60A3\u8005\u4E2D\u7684\u4E34\u5E8A\u5E94\u7528",
-    舒复派: "Auxiliary Product A\u7684\u4E34\u5E8A\u5E94\u7528",
-    增稠派: "Auxiliary Product B\u7684\u4E34\u5E8A\u5E94\u7528"
+    "Auxiliary Product A": "Auxiliary Product A\u7684\u4E34\u5E8A\u5E94\u7528",
+    "Auxiliary Product B": "Auxiliary Product B\u7684\u4E34\u5E8A\u5E94\u7528"
   };
   function text(value) {
     return String(value ?? '').trim();
   }
   const Departments = typeof require === 'function' ? require('./department-identity.js') : window.DepartmentIdentity;
+  const Customers = typeof require === 'function' ? require('./customer-profile/customer-profile.js') : window.CustomerProfileV1;
   const departmentIds = entity => Departments.idsOf(entity);
   function scopedPeople(records, context = {}) {
     if (!text(context.hospitalId)) return [];
-    return (records || []).filter(person => person.active !== false && text(person.customerId) && text(person.hospitalId) === text(context.hospitalId) && (!departmentIds(context).length || Departments.sharesDepartment(person, context)));
+    return (records || []).filter(person => person.active !== false && text(person.hospitalId) === text(context.hospitalId) && (!departmentIds(context).length || Departments.sharesDepartment(person, context)));
   }
   function number(value) {
     const parsed = Number(value);
@@ -120,11 +121,11 @@
         hospitalId: plan.hospitalId,
         departmentId: plan.departmentId
       });
-      const customerCandidates = people.filter(person => person.active !== false && person.hospitalId === plan.hospitalId && (!plan.sourceDimensions?.department || Departments.sharesDepartment(person, {
+      const customerCandidates = people.filter(person => Customers.customerMasterIdentity(person,people).status === 'RESOLVED' && person.hospitalId === plan.hospitalId && (!plan.sourceDimensions?.department || Departments.sharesDepartment(person, {
         departmentId: department.id
-      })) && text(person.customerName) === text(plan.customerName));
+      })));
       const explicit = customerCandidates.find(person => person.customerId === plan.customerId);
-      const customer = explicit || (customerCandidates.length === 1 ? customerCandidates[0] : null);
+      const customer = explicit || null;
       const customerMatchStatus = customer ? 'EXACT' : customerCandidates.length > 1 ? 'AMBIGUOUS' : 'UNMATCHED';
       return {
         ...plan,
@@ -135,7 +136,7 @@
         customerMatchStatus,
         customerBindingProvenance: customer ? {
           source: 'CUSTOMER_MASTER',
-          evidence: 'EXACT_NAME_HOSPITAL_DEPARTMENT',
+          evidence: 'EXPLICIT_STABLE_ID',
           customerId: customer.customerId
         } : null
       };
@@ -1588,8 +1589,13 @@
         button.type = 'button';
         button.role = 'option';
         button.textContent = person.customerName + ' · ' + person.department;
+        const reliable = Customers.customerMasterIdentity(person,getCustomerEntities()).status === 'RESOLVED';
+        button.disabled = !reliable;
+        button.dataset.personIdentity = reliable ? 'RESOLVED' : 'UNRESOLVED';
+        if (!reliable) button.textContent += ' · 身份待确认';
         button.dataset.personId = person.customerId;
         button.addEventListener('click', () => {
+          if (!reliable) return;
           input.value = person.customerName;
           input.dataset.entityId = person.customerId;
           input.dataset.reliableIdentity = 'true';
@@ -1783,6 +1789,13 @@
       }
       const prepared = await draftUI.prepareSave();
       const activity = {...prepared.snapshot, id: prepared.activityId};
+      for (const field of ['customerId','directorCustomerId','speakerCustomerId']) {
+        if (!activity[field]) continue;
+        const records=getCustomerEntities(), matches=records.filter(row=>row.customerId===activity[field]);
+        if (matches.length!==1 || Customers.customerMasterIdentity(matches[0],records).status!=='RESOLVED' || matches[0].hospitalId!==activity.hospitalId) {
+          showToast('人员身份待确认，请重新选择后保存'); return null;
+        }
+      }
       const now = new Date().toISOString();
       const existing = state.activities.find(item => item.id === activity.id);
       const derived = updateDerivedPreview();
@@ -2858,7 +2871,8 @@
       if (['customerId','directorCustomerId','speakerCustomerId'].includes(field)) {
         let people=getCustomerEntities();
         if (!people.length) {try{people=JSON.parse(WorkDeskPersistence.storage.getItem('customer-profile-v1-1-master-data')||'{}').records||[];}catch{return false;}}
-        return people.some(p=>p.customerId===id&&p.active!==false&&(!snapshot.hospitalId||p.hospitalId===snapshot.hospitalId));
+        const targets=people.filter(person=>person.customerId===id);
+        return targets.length===1 && Customers.customerMasterIdentity(targets[0],people).status==='RESOLVED' && (!snapshot.hospitalId||targets[0].hospitalId===snapshot.hospitalId);
       }
       return field==='employeeId' && (state.employeePlanRecords||[]).some(p=>p.employeeId===id) || field==='employeeId'&&editorSeed.employeeId===id;
     }

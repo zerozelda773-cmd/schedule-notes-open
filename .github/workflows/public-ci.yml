@@ -20,6 +20,8 @@ jobs:
           node-version: '24'
       - name: Static safety before package installation
         run: node scripts/public-safety.cjs
+      - name: Public catalogue business identifier boundary
+        run: node scripts/public-product-boundary.cjs
       - name: Locked public dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Workflow syntax and policy
@@ -38,6 +40,8 @@ jobs:
         run: node scripts/browser-equivalence.cjs
       - name: Activity CREATE/EDIT draft recovery and actual process restart
         run: node scripts/browser-draft-recovery.cjs
+      - name: Current frozen gate synthetic shadow semantics
+        run: node scripts/browser-shadow-gate.cjs
       - name: Auditable runtime source license closure
         run: node scripts/build-notices.cjs
       - name: Static source and built-output safety
@@ -85,3 +89,4 @@ jobs:
       - run: node scripts/android-assets.cjs
       - run: gradle --no-daemon --console=plain -p android-app :app:assemblePublicValidation :app:testPublicValidationUnitTest
 # Unsigned publicValidation only. No private signer, SDK-device-reality or artifact uploads.
+

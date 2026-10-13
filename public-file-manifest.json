@@ -1,6 +1,6 @@
 {
-  "version": "public-source-manifest-bootstrap",
-  "scope": "Public source and license only; self hash is bound by the Git tree; excludes generated build outputs, caches, local data and credentials",
+  "version": "public-shadow-source-manifest",
+  "scope": "Public source, synthetic projection tests and explicitly authorized SHA/intent provenance only; self hash bound by Git tree; private inputs/evidence/history excluded",
   "synthetic": "synthetic-product-v1",
   "files": [
     {
@@ -9,7 +9,7 @@
     },
     {
       "path": ".github/workflows/public-ci.yml",
-      "sha256": "209d2d756f2a9b8ca1b0023a4f82d211f6309ead3d39efaf0961767f852fddb5"
+      "sha256": "61f823f183f02b6bb68db7213684ac9d300b50d059a8ae6c1f9ef4fe3f3a0dfb"
     },
     {
       "path": ".gitignore",
@@ -17,7 +17,7 @@
     },
     {
       "path": "activity-center.js",
-      "sha256": "6a0264f9717be74c44741c8c83e4efeb0607db6d2bcac58e518d88ab94acd249"
+      "sha256": "5fa1c9a09bac499523182d321ab3101b6f50adf60d00b292b7da8a2d5245e332"
     },
     {
       "path": "activity-draft-store.js",
@@ -149,7 +149,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "513218855bb4c92f26e0f6d72cce57fb6d18230aa18dd4d16790595899c45ce8"
+      "sha256": "6ba16d767680209aac5bb928df340cc65e057b2f7021f64402a9a4caffaeee73"
     },
     {
       "path": "assets/activity-templates/academic-request.docx",
@@ -185,7 +185,7 @@
     },
     {
       "path": "customer-profile/customer-profile.js",
-      "sha256": "a6b01e259e6fbcbe4b0557cd65e218cd9790857b870f71f6fc7ea6b9189d0ce1"
+      "sha256": "32124a30b46d6507805f5333c3db08b704501f6113d7cb94faed7df8dccae3a1"
     },
     {
       "path": "customer-upgrade-adapter.js",
@@ -292,6 +292,10 @@
       "sha256": "ec3c241d604cc01939d4ac9e5225de31b239ee046ffeca7e3a23560eca76f827"
     },
     {
+      "path": "PRIVATE-PUBLIC-SHADOW-PROVENANCE.md",
+      "sha256": "f9957d0b6df5313135648a39b97b8ce4a020474deccc709a6071f47fb7f225db"
+    },
+    {
       "path": "product-registry.js",
       "sha256": "cd8b3ddfc25234d097deeda05853fd5f97769f3c207d614b726f83ea5901f17b"
     },
@@ -352,6 +356,10 @@
       "sha256": "778f6729e5497511eb1a49dd234ca14b2570352a74999e0bf7ec1800ed882d66"
     },
     {
+      "path": "scripts/browser-shadow-gate.cjs",
+      "sha256": "497f3874718ee160706639ad8c608f4c55e182eb4026653562712651d99caf13"
+    },
+    {
       "path": "scripts/browser-test.cjs",
       "sha256": "c63ec599ccc9f778d871c91241f5c145e7efc6f516bb7324b9f874c1de97cc64"
     },
@@ -378,6 +386,10 @@
     {
       "path": "scripts/native-test-fixtures.cjs",
       "sha256": "a2a464d8902415d4be34c1cc6f788bbdf60bb388c4fba9e9c63146e1f8e5e883"
+    },
+    {
+      "path": "scripts/public-product-boundary.cjs",
+      "sha256": "e6e794149187a128eb289ef340ae9171da82b2d7cd4599893c5896d468a779d3"
     },
     {
       "path": "scripts/public-safety.cjs",
@@ -417,7 +429,7 @@
     },
     {
       "path": "task-progress-v2.js",
-      "sha256": "fe508359d568b7c48f8cf97b49e4a69244b42fad304573cfdfbc484edb82396f"
+      "sha256": "8bb06d7e36ef63239a61771199fff1749d999ff7390af5cfcd4a64d59aeb6be8"
     },
     {
       "path": "tests/activity-documents.test.cjs",
@@ -449,11 +461,19 @@
     },
     {
       "path": "tests/identity-public-equivalence.test.cjs",
-      "sha256": "c9be8b0c980237b514982e3881207b6e7b660217d7f9757c83b0706434d2679f"
+      "sha256": "e80fc2ac03f2222cf3c25887eeea3820da2f162bbcc941f0844c9f5b9581a5e1"
     },
     {
       "path": "tests/product.test.cjs",
       "sha256": "8234e2a124997a189ef7f06d6e531de5a4914a55d233a576c04b5ffe08a32277"
+    },
+    {
+      "path": "tests/shadow-contracts.test.cjs",
+      "sha256": "7f47bb5c57e953f868f837f8b0ceef89b743d9baf85de1fd461ccb2ae55078c7"
+    },
+    {
+      "path": "tests/shadow-source-projection.test.cjs",
+      "sha256": "12492150967ff0a9f11a8b3ebae2d750ae5a99b8ed2bcf9b676f917899e4e485"
     },
     {
       "path": "tests/synthetic.test.cjs",
@@ -621,7 +641,7 @@
     },
     {
       "path": "workspace-navigation.js",
-      "sha256": "35e19a2e54703b36d123f09c76985bd2045c54e2c9fac93c5379d28e45eb2df5"
+      "sha256": "21b8acb2a44a48bae52fc79107c3800c33fbe377543e84743147bc74af08e5e3"
     }
   ]
 }
