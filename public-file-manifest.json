@@ -9,7 +9,7 @@
     },
     {
       "path": ".github/workflows/public-ci.yml",
-      "sha256": "6361a92651626408e11196e280a9b16c90a6de46d06b83720b4ce037674ecfcd"
+      "sha256": "e2cb0ce21897944ee5a135ee755d6fa29eb9f0434769c69c7b43f4d08287efff"
     },
     {
       "path": ".gitignore",
@@ -333,7 +333,7 @@
     },
     {
       "path": "sales-import-adapter.js",
-      "sha256": "2852903dceba90fd9d3bd506661aa4789affc229d3eea56773740091650b50ab"
+      "sha256": "2701817fc8665386cd9db1632853ce0986830a6eb63b1fda4d3c76573b910b2e"
     },
     {
       "path": "scripts/android-assets.cjs",
@@ -378,6 +378,10 @@
     {
       "path": "scripts/native-test-fixtures.cjs",
       "sha256": "a2a464d8902415d4be34c1cc6f788bbdf60bb388c4fba9e9c63146e1f8e5e883"
+    },
+    {
+      "path": "scripts/public-product-boundary.cjs",
+      "sha256": "fb9094f7a79bc3a9bc25520de8e515a45109643a443e9dd673fbd47997af91e5"
     },
     {
       "path": "scripts/public-safety.cjs",
@@ -440,6 +444,10 @@
       "sha256": "9a8318595b17ae16086adcb6930658fcd1188d6bcc5491bdfa1adc1a70d6f5bc"
     },
     {
+      "path": "tests/fiscal-mom-projection.test.cjs",
+      "sha256": "7bbf578540f08566439a2d670cd9820be88ad1779ae63af6f79873e9c3110935"
+    },
+    {
       "path": "tests/focused-contracts.test.cjs",
       "sha256": "bdc00d695092e91d0350c64ba210eef98ed89ceaab67d3edb8d9f9d75f7847bc"
     },
@@ -454,6 +462,10 @@
     {
       "path": "tests/product.test.cjs",
       "sha256": "8234e2a124997a189ef7f06d6e531de5a4914a55d233a576c04b5ffe08a32277"
+    },
+    {
+      "path": "tests/public-catalogue-boundary.test.cjs",
+      "sha256": "13b00eed5cc9fa6090cae06bac6f7ee3e2ca13dd0c98bc15da9557a37b50680e"
     },
     {
       "path": "tests/synthetic.test.cjs",
@@ -622,14 +634,6 @@
     {
       "path": "workspace-navigation.js",
       "sha256": "35e19a2e54703b36d123f09c76985bd2045c54e2c9fac93c5379d28e45eb2df5"
-    },
-    {
-      "path": "scripts/public-product-boundary.cjs",
-      "sha256": "fb9094f7a79bc3a9bc25520de8e515a45109643a443e9dd673fbd47997af91e5"
-    },
-    {
-      "path": "tests/public-catalogue-boundary.test.cjs",
-      "sha256": "13b00eed5cc9fa6090cae06bac6f7ee3e2ca13dd0c98bc15da9557a37b50680e"
     }
   ]
 }

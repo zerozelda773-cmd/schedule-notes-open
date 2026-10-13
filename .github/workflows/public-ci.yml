@@ -30,6 +30,8 @@ jobs:
         run: node scripts/generate-documents.cjs
       - name: Web build
         run: npm run build
+      - name: Focused synthetic Fiscal MoM boundary contracts
+        run: node --test tests/fiscal-mom-projection.test.cjs
       - name: Hospital Identity Task Activity Customer Sales Fiscal contracts
         run: npm test
       - name: Real standard-runner Chromium
