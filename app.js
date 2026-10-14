@@ -921,6 +921,7 @@ function hospitalDirectorySnapshot({
     invalidRecords: []
   };
   const inputs = [state.records, state.records.length, state.activityLedgerEntries, state.activityLedgerEntries.length, state.settings.hospitalMappingRows, state.settings.hospitalMappingRows?.length, state.settings.departmentIdentityRegistry, window.customerProfileV1App?.getMasterRecords?.().map(row => row.customerId + ':' + row.updatedAt).join('|') || ''];
+  inputs.push(JSON.stringify(state.settings.hospitalDirectoryOverrides || {}));
   if (hospitalDirectoryCacheReady && !refresh && inputs.every((value, index) => value === hospitalDirectoryInputs[index])) return hospitalDirectoryCache;
   hospitalDirectoryInputs = inputs;
   hospitalDirectoryCache = window.HospitalMaintenanceAdapter.buildHospitalDirectory(canonicalDepartmentRows(hospitalDirectorySourceRows()).flatMap(row => {
@@ -3700,7 +3701,7 @@ function activityContextMeta(activity = {}, snapshot = {}) {
 }
 function updateContextNavigationBar(entry) {
   const destination = entry?.contract?.destination;
-  const moduleDestination = ['customer-profile', 'hospital-context', 'sales-dashboard'].includes(destination);
+  const moduleDestination = entry?.contract?.source?.module === 'modules';
   const visible = Boolean(entry && entry.meta !== '数据库入口');
   els.contextNavigationBar.hidden = !visible;
   if (!visible) return;
@@ -3750,8 +3751,10 @@ function decorateActivityContextBack(selector) {
   const button = document.querySelector(selector);
   if (!button) return;
   button.classList.add('contextual-navigation-back');
-  button.textContent = '‹ 返回活动申请';
-  button.setAttribute('aria-label', '返回活动申请');
+  const sourceWorkspace = workspaceNavigationController?.getCurrentEntry?.()?.sourceWorkspace;
+  const backLabel = sourceWorkspace === 'tasks' ? '返回任务' : sourceWorkspace === 'customers' ? '返回客户' : '返回活动申请';
+  button.textContent = '‹ ' + backLabel;
+  button.setAttribute('aria-label', backLabel);
   if (!button.dataset.workspaceNavigationBound) {
     button.dataset.workspaceNavigationBound = '1';
     button.addEventListener('click', event => {
@@ -3792,8 +3795,8 @@ function openActivityContext(kind, payload, snapshot, labels = {}) {
     customerId: payload.customerId || undefined
   } : {
     customerId: payload.customerId || undefined,
-    hospital: payload.hospitalName || payload.hospitalCode ? {
-      id: payload.hospitalId || payload.hospitalCode || '',
+    hospital: payload.hospitalId || payload.hospitalName || payload.hospitalCode ? {
+      id: payload.hospitalId || '',
       name: payload.hospitalName || payload.hospitalCode || ''
     } : undefined
   };
@@ -3844,7 +3847,11 @@ function openCustomerFromTask(query, {
     resolvedBy: sourceTask.resolvedBy
   } : null;
   const reliableTarget = sourceTask ? window.WorkspaceNavigation?.isReliableCustomerMatch?.(sourceMatch) : profiles.some(item => String(item.customerId || '').trim() === target);
-  const profile = reliableTarget ? profiles.find(item => String(item.customerId || '').trim() === target) : null;
+  const masters = app?.getMasterRecords?.() || [];
+  const masterMatches = masters.filter(row=>row.customerId===target);
+  const masterReliable = masterMatches.length===1 && window.CustomerProfileV1.customerMasterIdentity(masterMatches[0],masters).status==='RESOLVED';
+  const matches = profiles.filter(item=>item.customerId===target && (!product || item.product===product));
+  const profile = reliableTarget && masterReliable && matches.length===1 ? matches[0] : null;
   window.taskProgressV2App?.closeDrawer?.();
   if (!workspaceNavigationController) return;
   workspaceNavigationController.openContext({
@@ -3880,35 +3887,22 @@ function openCustomerFromTask(query, {
     meta: [profile?.hospital, profile?.department, profile?.product || product].filter(Boolean).join(' · ')
   });
 }
-function openHospitalMaintenance(query) {
+function openHospitalMaintenance(hospitalId, options = {}) {
+  const hospital = window.WorkspaceNavigation.exactHospital(hospitalId,hospitalDirectorySnapshot().hospitals);
+  if (!hospital || !workspaceNavigationController) return false;
+  const sourceTask = state.tasks.find(task=>task.id===options.taskId && task.hospitalId===hospital.hospitalId);
+  const sourceSnapshot = captureWorkspaceSnapshot('tasks');
+  if (sourceTask) sourceSnapshot.task = {...sourceSnapshot.task,selectedTaskId:sourceTask.id};
   window.taskProgressV2App?.closeDrawer?.();
-  if (!workspaceNavigationController) return;
-  workspaceNavigationController.openContext({
-    destination: 'hospital-context',
-    source: {
-      module: 'task',
-      entityType: 'task',
-      entityId: String(query || ''),
-      routeKey: `task:hospital:${query || ''}`
-    },
-    context: {},
-    behavior: {
-      persistence: 'transient',
-      customerMatch: 'exact-only',
-      fallback: 'broader-context'
-    }
-  }, {
-    sourceWorkspace: 'tasks',
-    viewPayload: {
-      hospitalName: String(query || '')
-    },
-    title: String(query || '') || '医院 / 科室',
-    meta: '从任务进度进入'
-  });
+  return workspaceNavigationController.openContext({destination:'hospital-context',
+    source:{module:'task',entityType:sourceTask?'task':'none',entityId:sourceTask?.id || '',routeKey:'task:hospital'},
+    context:{hospital:{id:hospital.hospitalId,name:hospital.hospitalName}},
+    behavior:{persistence:'transient',customerMatch:'exact-only',fallback:'broader-context'}},
+    {sourceWorkspace:'tasks',sourceSnapshot,viewPayload:{hospitalId:hospital.hospitalId,hospitalName:hospital.hospitalName},title:hospital.hospitalName,meta:'从任务进度进入'});
 }
 function openActivityHospitalContext(activity, snapshot) {
   const payload = activityContextMeta(activity, snapshot);
-  if (!payload.hospitalName && !payload.hospitalCode) {
+  if (!payload.hospitalId && !payload.hospitalName && !payload.hospitalCode) {
     showToast('请先填写Synthetic Hospital Example或编码');
     return false;
   }
@@ -4045,7 +4039,7 @@ function showWorkspaceEntry(entry) {
       queueMicrotask(() => decorateActivityContextBack('#customerView [data-cp-close]'));
     }
     if (destination === 'hospital-context') {
-      const opened = window.customerProfileV1App?.openHospital?.(payload.hospitalCode) || window.customerProfileV1App?.openHospital?.(payload.hospitalName);
+      const opened = window.customerProfileV1App?.openHospital?.(entry.contract?.context?.hospital?.id || '');
       if (!opened) {
         els.customerProfileV1?.querySelector('[data-cp-mode="hospitals"]')?.click();
         const search = els.customerProfileV1?.querySelector('#cpSearch');
@@ -4157,12 +4151,9 @@ function restoreWorkspaceSnapshot(workspace, snapshot = {}) {
   restoreWorkspaceScrollAndFocus(snapshot);
 }
 function navigationProduct(value) {
-  const id = dashboardProductId(value);
-  if (!["Primary Product A", "Primary Product B"].includes(id)) return null;
-  return {
-    id,
-    label: id === "Primary Product B" ? "Primary Product B" : "Primary Product A"
-  };
+  const product = window.ProductRegistry?.getProduct(value);
+  if (product?.role !== 'PRIMARY') return null;
+  return {id:product.id,label:product.name};
 }
 function navigationPeriod(value) {
   if (!value || typeof value !== 'object') return null;
@@ -4464,12 +4455,18 @@ function openPrimaryWorkspace(workspace, {
   if (!fromHistory) {
     const hash = target === 'activities' ? '#/activity/list' : '#/tasks';
     const method = replace ? 'replaceState' : 'pushState';
+    const primaryState = {...(history.state || {})};
+    delete primaryState.workspaceNavigation;
+    delete primaryState.workspaceNavigationLocalRoute;
     history[method]({
-      ...(history.state || {}),
+      ...primaryState,
       appWorkspace: target,
       fromWorkspace: currentWorkspace
     }, '', location.pathname + location.search + hash);
   }
+  workspaceNavigationController?.clearContext?.();
+  while (window.customerProfileV1App?.closeTopLayer?.()) {}
+  updateContextNavigationBar(null);
   switchView(target);
 }
 function switchView(view, options = {}) {
@@ -6583,7 +6580,7 @@ function handleTaskListClick(event) {
   }
   const hospitalButton = event.target.closest('[data-task-hospital-context]');
   if (hospitalButton) {
-    openHospitalMaintenance(hospitalButton.dataset.taskHospitalContext);
+    openHospitalMaintenance(hospitalButton.dataset.taskHospitalContext, {taskId:hospitalButton.closest('[data-task-card]')?.dataset.taskCard || ''});
     return;
   }
   const progressButton = event.target.closest('[data-progress-task]');
@@ -7305,6 +7302,7 @@ async function initializeApp() {
   await initializeCloud();
   if (location.hash.startsWith('#/activity/')) switchView('activities');
   if (location.hash.startsWith('#customer-profile-v1')) switchView('customers');
+  workspaceNavigationController?.restoreHospitalHistory?.();
   if (state.settings.notifications && 'Notification' in window && Notification.permission === 'granted') els.notificationButton.textContent = '提醒已开启';
   if (!window.AndroidBridge && 'serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(error => console.warn('离线服务未启用', error));
   maybePrompt();

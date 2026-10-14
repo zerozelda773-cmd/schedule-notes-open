@@ -403,7 +403,8 @@
     const hospitalMonthProduct = group(assignedRows, ['hospitalId', 'hospitalCanonical', 'fiscalYear', 'month', 'productId', 'productName']);
     const byMonthProduct = new Map(monthProduct.map(item => [`${item.fiscalYear}|${item.month}|${item.productId}`, item.netBoxes]));
     hospitalMonthProduct.forEach(item => {
-      const date = new Date(Date.UTC(Number(item.fiscalYear), Number(item.month) - 1, 1));
+      const calendarYear = Number(item.fiscalYear) - (Number(item.month) >= 10 ? 1 : 0);
+      const date = new Date(Date.UTC(calendarYear, Number(item.month) - 1, 1));
       date.setUTCMonth(date.getUTCMonth() - 1);
       const previousFY = date.getUTCMonth() + 1 >= 10 ? date.getUTCFullYear() + 1 : date.getUTCFullYear();
       const previousMonth = date.getUTCMonth() + 1;

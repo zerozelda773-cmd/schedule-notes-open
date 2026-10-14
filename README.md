@@ -72,3 +72,7 @@ The workflow runs safety and license/manifest checks, Web and product contracts,
 ## License and contributions
 
 First-party source is licensed under [Apache-2.0](LICENSE); see [NOTICE](NOTICE). Third-party components retain their own terms, supplied in [THIRD-PARTY-NOTICES-DRAFT.md](THIRD-PARTY-NOTICES-DRAFT.md) and third-party/. Read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md) before sharing changes or reports. This is the public source bootstrap; no signed release or npm publication is provided.
+
+## Public product candidate
+
+This non-canonical product candidate restores stable identity, scoped R observations, Hospital cache/navigation, Task source context, current-route restoration and Fiscal boundaries using synthetic data only. It is not a release. See [product contracts](docs/public-product-contracts.md) and [declared public variants](docs/public-product-variants.md). No merge, release, npm publication or canonical cutover is implied.
