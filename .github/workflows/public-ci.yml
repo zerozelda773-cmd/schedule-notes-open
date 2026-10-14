@@ -36,6 +36,8 @@ jobs:
         run: node scripts/public-alias-boundary.cjs
       - name: Hospital Identity Task Activity Customer Sales Fiscal contracts
         run: npm test
+      - name: Fiscal boundary focused regression
+        run: node --test tests/fiscal-mom-projection.test.cjs
       - name: Real standard-runner Chromium
         run: npx playwright install --with-deps chromium
       - name: Chromium startup offline boundary and narrow viewports
@@ -44,6 +46,10 @@ jobs:
         run: node scripts/browser-equivalence.cjs
       - name: Activity CREATE/EDIT draft recovery and actual process restart
         run: node scripts/browser-draft-recovery.cjs
+      - name: Public product source projection and ID-only Hospital contracts
+        run: node scripts/browser-product-contracts.cjs
+      - name: Actual product save Back reload and process restart smoke
+        run: node scripts/browser-product-smoke.cjs
       - name: Auditable runtime source license closure
         run: node scripts/build-notices.cjs
       - name: Static source and built-output safety
