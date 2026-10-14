@@ -83,6 +83,54 @@
     if (phase !== 'READY') throw new Error('Persistence is not ready');
     entries[PRIMARY] = JSON.stringify(state); return queueCommit();
   }
+  // Local backup extends the existing primary-state format with the stores already owned here.
+  // Preserve raw envelopes and evidence; restoring must never allocate or match entity IDs.
+  function collectBackup(state) {
+    const values = Object.create(null);
+    for (const key of KEYS) {
+      if (key === PRIMARY) continue;
+      const raw = storage.getItem(key);
+      if (raw !== null) values[key] = raw;
+    }
+    parseBackupEntries({localPersistence: {schemaVersion: 1, entries: values}});
+    return {...state, localPersistence: {schemaVersion: 1, entries: values}};
+  }
+  function parseBackupEntries(backup) {
+    if (!Object.prototype.hasOwnProperty.call(backup, 'localPersistence')) return null;
+    const local = backup.localPersistence;
+    if (!local || local.schemaVersion !== 1) throw new Error('Unsupported local backup version');
+    validate(local.entries);
+    if (Object.prototype.hasOwnProperty.call(local.entries, PRIMARY)) throw new Error('Duplicate primary backup state');
+    const master = local.entries['customer-profile-v1-1-master-data'];
+    if (master !== undefined) {
+      const value = JSON.parse(master), rows = Array.isArray(value) ? value : value?.records;
+      if (!Array.isArray(rows) || rows.some(row => !row || typeof row !== 'object' || Array.isArray(row))) throw new Error('Invalid Customer master backup');
+    }
+    return {...local.entries};
+  }
+  async function restoreBackupEntries(values) {
+    values = parseBackupEntries({localPersistence: {schemaVersion: 1, entries: values}});
+    if (native) {
+      if (phase !== 'READY') throw new Error('Persistence is not ready');
+      // Existing native snapshot commit keeps this entity-store batch atomic and ACK-backed.
+      entries = {...(entries[PRIMARY] !== undefined ? {[PRIMARY]: entries[PRIMARY]} : {}), ...values};
+      await queueCommit(); return;
+    }
+    const previous = Object.create(null);
+    for (const key of KEYS) if (key !== PRIMARY) previous[key] = localStorage.getItem(key);
+    try {
+      for (const key of KEYS) {
+        if (key === PRIMARY) continue;
+        if (Object.prototype.hasOwnProperty.call(values, key)) localStorage.setItem(key, values[key]);
+        else localStorage.removeItem(key);
+      }
+    } catch (error) {
+      for (const [key, raw] of Object.entries(previous)) {
+        if (raw === null) localStorage.removeItem(key); else localStorage.setItem(key, raw);
+      }
+      throw error;
+    }
+  }
   function committedSyncState() {
     const primary = JSON.parse(committed[PRIMARY] || '{}');
     const read = key => JSON.parse(committed[key] || '{}') || {};
@@ -97,5 +145,6 @@
       customerMasterEvents: list(development.masterEvents) };
   }
   window.WorkDeskPersistence = Object.freeze({ native, keys: KEYS, storage, bootstrap, initialize, saveState, fail,
+    collectBackup, parseBackupEntries, restoreBackupEntries,
     flush: () => tail, committedSyncState, status: () => ({ phase, pending, migrationComplete: envelope?.migrationComplete === true || initialized && phase === 'READY' }) });
 })();

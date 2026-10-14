@@ -5780,11 +5780,14 @@ function maybePrompt() {
     setTimeout(() => showToast(count ? `月度销售提醒：发现 ${count} 个科室产出下滑，请查看销售数据面板` : '月度销售检查完成：未发现科室产出下滑'), 1100);
   }
 }
-function exportBackup() {
-  downloadTextFile(`工作进度台备份-${dateKey()}.json`, JSON.stringify({
-    exportedAt: new Date().toISOString(),
-    ...state
-  }, null, 2), 'application/json');
+async function exportBackup() {
+  try {
+    await window.WorkDeskPersistence.flush();
+    downloadTextFile(`工作进度台备份-${dateKey()}.json`, JSON.stringify({
+      exportedAt: new Date().toISOString(),
+      ...window.WorkDeskPersistence.collectBackup(state)
+    }, null, 2), 'application/json');
+  } catch (error) { showToast(`备份失败：${error.message}`); }
 }
 async function importBackup(event) {
   const file = event.target.files?.[0];
@@ -5792,7 +5795,10 @@ async function importBackup(event) {
   try {
     const parsed = JSON.parse(await file.text());
     if (!Array.isArray(parsed.tasks)) throw new Error('格式不正确');
+    const importedEntries = window.WorkDeskPersistence.parseBackupEntries(parsed);
     if (!confirm(`备份中有 ${parsed.tasks.length} 项事项。导入会替换本机现有数据，是否继续？`)) return;
+    // Authoritative entity stores must be durable before dependent Task state is restored.
+    if (importedEntries !== null) await window.WorkDeskPersistence.restoreBackupEntries(importedEntries);
     state.tasks = parsed.tasks;
     state.reviews = Array.isArray(parsed.reviews) ? parsed.reviews : [];
     state.records = Array.isArray(parsed.records) ? parsed.records : [];
@@ -5806,9 +5812,16 @@ async function importBackup(event) {
     };
     const importedEmployees = Array.isArray(state.settings.companyEmployees) ? state.settings.companyEmployees : [];
     state.settings.companyEmployees = [...new Set([...importedEmployees, ...(window.ActivityCenter?.DEFAULT_COMPANY_EMPLOYEES || [])])];
-    syncTasksForAllActivities();
-    syncHospitalMaintenanceTasks();
-    persist();
+    if (importedEntries === null) {
+      syncTasksForAllActivities();
+      syncHospitalMaintenanceTasks();
+    }
+    await persist();
+    await window.WorkDeskPersistence.flush();
+    if (importedEntries !== null) {
+      // Existing startup hydrates every restored store, index and cache from the same snapshot.
+      location.reload(); return;
+    }
     render();
     showToast('备份已导入');
   } catch (error) {
