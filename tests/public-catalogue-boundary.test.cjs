@@ -1,0 +1,10 @@
+'use strict';
+const test=require('node:test'),a=require('assert/strict'),fs=require('fs'),p=require('path'),{assertPublicCatalogue:check}=require('../scripts/public-product-boundary.cjs');
+const products=[{name:'Demo A'},{name:'Demo B'}],wrap=s=>'const PRODUCT_TOPICS = {\n'+s+'\n};',valid='"Demo A":"Demo A topic", "Demo B":"Demo B topic"';
+test('actual topic catalogue is public-only',()=>a.equal(check(fs.readFileSync(p.join(__dirname,'../activity-center.js'),'utf8'),require('../product-registry.js').products).status,'PASS'));
+test('declared synthetic catalogue passes',()=>a.equal(check(wrap(valid),products).status,'PASS'));
+test('unquoted object identifiers fail closed',()=>a.throws(()=>check(wrap('Undeclared: "Demo A topic", "Demo B":"Demo B topic"'),products)));
+test('unknown quoted product keys are rejected',()=>a.throws(()=>check(wrap('"Unknown Demo": "Demo A topic", "Demo B":"Demo B topic"'),products)));
+test('escaped unknown keys are rejected after decoding',()=>a.throws(()=>check(wrap('"\\u0058": "Demo A topic", "Demo B":"Demo B topic"'),products)));
+test('unknown topic labels are rejected',()=>a.throws(()=>check(wrap('"Demo A":"Unknown topic", "Demo B":"Demo B topic"'),products)));
+test('missing declared catalogue entry is rejected',()=>a.throws(()=>check(wrap('"Demo A":"Demo A topic"'),products)));

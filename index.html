@@ -1,0 +1,1008 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#315c52">
+  <meta name="description" content="分类记录、进度追踪、工作日晨报和每周复盘的个人工作台">
+  <title>工作进度台</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <style>body[data-runtime-ready="false"] > :not(script):not(style) { visibility: hidden; }</style>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="customer-profile/customer-profile.css">
+  <link rel="stylesheet" href="activity-ui-v2.css">
+</head>
+<body data-runtime-ready="false">
+  <header class="app-header">
+    <div class="topbar">
+      <button class="top-action" id="filterButton" type="button" aria-label="打开任务筛选">☰ <span>筛选</span></button>
+      <div class="brand-lockup">
+        <p class="eyebrow" id="todayLabel"></p>
+        <h1>日程速记</h1>
+      </div>
+      <div class="header-utility-actions">
+        <button class="top-action" id="themeToggleButton" type="button" aria-pressed="false">🌙 护眼</button>
+        <button class="top-action cloud-button" id="cloudButton" type="button">☁ 离线使用</button>
+      </div>
+    </div>
+    <div class="date-period-controls" aria-label="按年月筛选任务">
+      <label>年份<select id="taskYearFilter"></select></label>
+      <label>月份<select id="taskMonthFilter"></select></label>
+      <button class="text-button" id="todayDateButton" type="button">回到今天</button>
+    </div>
+    <div class="date-navigator" aria-label="按日期查看任务">
+      <button class="date-arrow" id="previousDateButton" type="button" aria-label="前一天">‹</button>
+      <div class="date-strip" id="dateStrip"></div>
+      <button class="date-arrow" id="nextDateButton" type="button" aria-label="后一天">›</button>
+    </div>
+  </header>
+
+  <section class="context-navigation-bar" id="contextNavigationBar" aria-live="polite" hidden>
+    <button type="button" id="contextNavigationBack" data-navigation-back>‹ 返回</button>
+    <div><span id="contextNavigationKind">上下文详情</span><strong id="contextNavigationTitle"></strong><small id="contextNavigationMeta"></small></div>
+  </section>
+
+  <main>
+    <div class="view-stack" id="taskView" role="region" aria-label="待办项">
+    <section class="briefing compact-briefing" aria-labelledby="briefingTitle">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">工作日晨报</p>
+          <h2 id="briefingTitle">今天先做什么</h2>
+        </div>
+        <div class="briefing-actions">
+          <button class="text-button compact-clear-button" id="clearBriefingFiltersButton" type="button">清除筛选</button>
+          <button class="text-button" id="readBriefingButton" type="button">朗读今日晨报</button>
+        </div>
+      </div>
+      <div class="briefing-grid" id="briefingGrid"></div>
+      <div class="briefing-list" id="briefingList" aria-live="polite"></div>
+    </section>
+
+    <section class="tasks-section collapsible-module" id="tasksSection" aria-labelledby="tasksTitle">
+      <div class="section-heading collapsible-module-heading">
+        <div class="collapsible-title-row">
+          <button class="module-collapse-toggle" id="tasksSectionToggle" type="button" aria-expanded="true" aria-controls="tasksSectionBody" aria-label="收起任务清单"><span aria-hidden="true">▾</span></button>
+          <div class="collapsible-title-copy">
+          <p class="eyebrow">真实待办</p>
+          <h2 id="tasksTitle">主动事项</h2>
+          </div>
+        </div>
+        <div class="task-heading-actions">
+          <span class="muted" id="taskCount"></span>
+          <button class="button secondary compact-button collapse-all-button" id="collapseAllTasksButton" type="button" disabled aria-label="全部收起任务">
+            <svg class="line-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m7 10 5-5 5 5M7 19l5-5 5 5"/></svg><span>收起</span>
+          </button>
+          <button class="button compact-button" id="newTaskButton" type="button">＋ 新增</button>
+        </div>
+      </div>
+      <div class="collapsible-module-body" id="tasksSectionBody">
+        <div class="task-external-context" id="taskExternalContext" hidden>
+          <span id="taskExternalContextText"></span>
+          <button class="text-button" id="clearTaskExternalContextButton" type="button">清除上下文</button>
+        </div>
+        <div class="task-list" id="taskList"></div>
+        <div class="empty-state" id="emptyState" hidden>
+          <div class="empty-icon">✓</div>
+          <h3>当前没有待办</h3>
+          <p>点击“新增事项”，填写时间、地点、类别和工作内容。</p>
+        </div>
+      </div>
+    </section>
+
+    <div id="taskProgressV2" aria-label="业务任务建议"></div>
+
+    <h2 class="task-secondary-title" id="taskUtilityTitle" hidden><button class="task-secondary-toggle" id="taskUtilityToggle" type="button" aria-expanded="true" aria-controls="taskUtilityBody">复盘、提醒与备份</button></h2>
+    <details class="utility-panel" hidden>
+      <summary>复盘、提醒与备份</summary>
+      <div class="utility-content" id="taskUtilityBody">
+        <section class="weekly-card" aria-labelledby="weeklyTitle">
+          <div>
+            <p class="eyebrow">每周五 17:00</p>
+            <h2 id="weeklyTitle">本周完成确认</h2>
+            <p class="muted" id="weeklyStatus">确认本周结果，同时录入下周新增工作。</p>
+          </div>
+          <button class="button" id="weeklyReviewButton" type="button">开始本周确认</button>
+        </section>
+        <section class="data-card" aria-labelledby="dataTitle">
+          <div>
+            <p class="eyebrow">数据与提醒</p>
+            <h2 id="dataTitle">本机离线 + 私有云</h2>
+            <p class="muted">登录云账号后电脑和手机同步，仍建议定期导出备份。</p>
+          </div>
+          <div class="data-actions">
+            <button class="button secondary" id="cloudAccountEntryButton" type="button">账号与离线登录</button>
+            <button class="button secondary" id="manualUpdateEntryButton" type="button">检查更新</button>
+            <button class="button secondary" id="notificationButton" type="button">开启提醒</button>
+            <button class="button secondary" id="exportButton" type="button">导出备份</button>
+            <label class="button secondary file-button">导入备份<input type="file" id="importInput" accept="application/json"></label>
+          </div>
+        </section>
+      </div>
+    </details>
+
+    </div>
+
+    <div class="view-stack" id="customerView" role="region" aria-label="客户上下文详情" hidden>
+      <div id="customerProfileV1"></div>
+    </div>
+
+    <div class="view-stack activity-view" id="activityView" role="region" aria-label="活动区" hidden>
+      <section class="activity-workspace" aria-label="活动申请管理系统">
+          <span class="visually-hidden">活动申请与费用进度</span>
+          <header class="activity-page-header">
+            <div><h1 id="activityPageTitle" tabindex="-1">活动申请</h1><p>会议申请 · 预算管理 · 数据联动</p></div>
+            <div class="activity-page-actions">
+              <button class="button" id="newActivityButton" type="button">＋ 新建活动</button>
+              <button class="button secondary" id="importActivityButton" type="button">Excel 导入</button>
+              <button class="button secondary" id="importActivityLedgerButton" type="button">佰+管登记表导入</button>
+            </div>
+            <button class="button activity-mobile-new" id="newActivityMobileButton" type="button">＋ 新建</button>
+          </header>
+
+          <section class="activity-time-toolbar" aria-label="活动时间范围" hidden>
+            <label>年份<select id="activityYearFilter"></select></label>
+            <label>月份<select id="activityMonthFilter"></select></label>
+            <label class="activity-date-control">具体日期<input id="activityDateFilter" type="date"></label>
+            <button class="button secondary" id="activityCurrentMonthButton" type="button">回到本月</button>
+            <button class="activity-date-token" id="activityDateToken" type="button" aria-label="清除具体日期" hidden></button>
+          </section>
+
+          <div class="activity-mobile-actions" aria-label="活动申请快捷操作">
+            <button type="button" data-trigger-activity-import="application">Excel 导入</button>
+            <button type="button" data-trigger-activity-import="ledger">佰+管登记表导入</button>
+          </div>
+
+          <div class="activity-command-bar">
+            <div class="activity-section-tabs" role="tablist" aria-label="活动申请页面">
+              <button type="button" role="tab" aria-selected="true" aria-controls="activityListPanel" id="activityListTab" data-activity-section="list">活动列表</button>
+              <button type="button" role="tab" aria-selected="false" aria-controls="activityExpensePanel" id="activityExpenseTab" data-activity-section="expenses">费用统计</button>
+              <button type="button" role="tab" aria-selected="false" aria-controls="activityImportPanel" id="activityImportTab" data-activity-section="imports">导入记录</button>
+            </div>
+            <input id="activityFileInput" type="file" accept=".xlsx,.xls,.xlsm" hidden>
+            <input id="activityLedgerInput" type="file" accept=".xlsx,.xls,.xlsm" hidden>
+          </div>
+
+          <section class="activity-filter-surface" aria-label="活动筛选">
+            <div class="activity-mobile-type-filter">
+              <span class="activity-filter-title">活动类型</span>
+              <div class="activity-chip-scroller" id="activityTypeChips" role="group" aria-label="活动类型快捷筛选"></div>
+            </div>
+            <div class="activity-filter-grid">
+              <label class="activity-desktop-type">会议类型<select id="activityTypeFilter"></select></label>
+              <label class="activity-status-select">申请状态<select id="activityStatusFilter"></select></label>
+              <label>产品<select id="activityProductFilter"></select></label>
+              <label class="activity-search-label">医院搜索<input id="activitySearch" type="search" placeholder="Synthetic Hospital Example / 医院编码"></label>
+              <button class="button secondary activity-reset-filter" id="resetActivityFilters" type="button">重置业务筛选</button>
+            </div>
+            <div class="activity-mobile-status-filter"><span class="activity-filter-title">申请状态</span><div id="activityStatusChips" role="group" aria-label="申请状态筛选"></div></div>
+          </section>
+
+          <section class="activity-kpis" id="activityKpis" aria-label="活动概览"></section>
+
+          <section class="activity-panel" id="activityListPanel" role="tabpanel" aria-labelledby="activityListTab" data-activity-panel="list">
+            <div class="activity-list-heading"><div><h2>活动明细</h2><p class="muted">筛选条件变化后实时更新</p></div><span id="activityCount" aria-live="polite"></span></div>
+            <div class="activity-pull-indicator" id="activityPullIndicator" aria-live="polite">下拉刷新</div>
+            <div class="activity-table-wrap">
+              <table class="activity-table"><caption class="visually-hidden">活动申请明细</caption><thead><tr><th scope="col">序号</th><th scope="col">会议时间</th><th scope="col">会议类型</th><th scope="col">编码</th><th scope="col">医院</th><th scope="col">科室</th><th scope="col">产品</th><th scope="col">参会人数</th><th scope="col">费用合计</th><th scope="col">申请状态</th><th scope="col">操作</th></tr></thead><tbody id="activityTableRows"></tbody></table>
+            </div>
+            <div class="activity-list" id="activityList"></div>
+            <div class="empty-state" id="activityEmpty"><div class="empty-icon">会</div><h3>暂无符合条件的活动</h3><p>调整筛选条件，或新建一条活动申请。</p></div>
+          </section>
+
+          <section class="activity-panel" id="activityExpensePanel" role="tabpanel" aria-labelledby="activityExpenseTab" data-activity-panel="expenses" hidden>
+            <div class="activity-list-heading"><div><h2>费用统计</h2><p class="muted">所有指标均来自当前活动与登记表数据</p></div><span id="activityExpenseCount"></span></div>
+            <p class="activity-expense-source-note" id="activityExpenseSourceNote"></p>
+            <section class="activity-expense-kpis" id="activityExpenseKpis" aria-label="费用指标"></section>
+            <div class="activity-expense-charts" id="activityExpenseCharts">
+              <article><header><h3>活动类型费用对比</h3><span>点击类型联动明细</span></header><div class="activity-bar-chart" id="activityTypeExpenseChart"></div></article>
+              <article><header><h3>月度费用趋势</h3><span>申请费用趋势</span></header><div class="activity-bar-chart" id="activityMonthlyExpenseChart"></div></article>
+              <article><header><h3>各活动类型数量</h3><span>真实活动数量</span></header><div class="activity-bar-chart" id="activityTypeCountChart"></div></article>
+              <article><header><h3>预算 vs 实际核销</h3><span>当前筛选范围</span></header><div class="activity-bar-chart" id="activityBudgetActualChart"></div></article>
+            </div>
+            <div class="activity-expense-details" id="activityExpenseDetails"></div>
+            <div class="empty-state" id="activityExpenseEmpty" hidden><div class="empty-icon">¥</div><h3>暂无费用数据</h3><p>导入或新建活动后，这里会显示真实费用分析。</p></div>
+          </section>
+
+          <section class="activity-panel" id="activityImportPanel" role="tabpanel" aria-labelledby="activityImportTab" data-activity-panel="imports" hidden>
+            <section class="activity-import-record"><h3>医院编码映射（仅身份资料）</h3><label>映射原表<input id="hospitalMappingInput" type="file" accept=".xlsx,.xls"></label><p id="hospitalMappingStatus" role="status">确认前不会写入；不得作为销售统计源。</p><button id="confirmHospitalMappingImport" type="button" disabled>确认导入医院映射</button></section>
+            <div class="activity-import-overview">
+              <div><p class="eyebrow">数据导入</p><h2>导入活动或费用台账</h2><p class="muted">年度登记表只更新费用快照，不会被误识别为活动。</p></div>
+              <div class="activity-import-actions"><button class="button secondary" type="button" data-trigger-activity-import="application">Excel 导入</button><button class="button" type="button" data-trigger-activity-import="ledger">从佰+管登记表导入</button></div>
+            </div>
+            <section class="activity-import-summary" id="activityImportSummary" aria-label="最近一次导入结果"></section>
+            <div class="activity-import-history"><div class="activity-list-heading"><div><h2>导入记录</h2><p class="muted">识别、成功、跳过与异常一目了然</p></div></div><div id="activityImportHistory"></div></div>
+            <details class="activity-staff-manager"><summary>公司员工排除名单</summary><p class="muted">名单中的人员不会被建立成外部讲者客户档案；固定名单不可移除。</p><div class="activity-staff-entry"><label class="visually-hidden" for="companyEmployeeInput">员工姓名</label><input id="companyEmployeeInput" placeholder="输入员工姓名"><button class="button secondary compact-button" id="addCompanyEmployee" type="button">添加</button></div><div class="activity-staff-list" id="companyEmployeeList"></div></details>
+          </section>
+      </section>
+
+    </div>
+
+    <div class="view-stack" id="dataView" role="region" aria-label="销售上下文详情" hidden>
+      <section id="salesDashboardV2" aria-label="销售仪表盘 V3 方案A"></section>
+      <div hidden aria-hidden="true">
+        <input id="dashboardReferenceDate" type="date">
+        <span id="dashboardMetricBadge"></span><span id="dataSourceSummary"></span>
+        <div id="dashboardV1Kpis"></div><div id="dashboardV1Insights"></div><div id="dashboardV1Charts"></div>
+        <div id="dashboardV1Alerts"></div><span id="dashboardV1AlertCount"></span>
+      </div>
+
+      <details class="advanced-analysis-panel" id="advancedAnalysisPanel">
+        <summary>更多分析与筛选</summary>
+        <div class="advanced-analysis-body">
+
+      <section class="dashboard-filters" aria-label="数据筛选">
+        <label>统计周期<select id="dataPeriodMode"><option value="fiscalYear">财年</option><option value="quarter">财季</option><option value="month">月</option><option value="week">周</option></select></label>
+        <label>时间范围<select id="dataPeriodValue"></select></label>
+        <label>办事处<select id="dataOfficeFilter"><option value="all">全部办事处</option></select></label>
+        <label>员工<select id="dataEmployeeFilter"><option value="all">全部员工</option></select></label>
+        <label>产品<select id="dataProductFilter"><option value="all">全部产品</option></select></label>
+        <label>医院<select id="dataHospitalFilter"><option value="all">全部医院</option></select></label>
+        <div class="comparison-toggle" aria-label="销售对比方式">
+          <button class="comparison-button active" type="button" data-comparison="none">本期</button>
+          <button class="comparison-button" type="button" data-comparison="yoy">同比</button>
+          <button class="comparison-button" type="button" data-comparison="mom">环比</button>
+        </div>
+        <button class="button secondary" id="clearDataFiltersButton">清除筛选</button>
+      </section>
+
+      <section class="dashboard-kpis" id="dashboardKpis" aria-label="销售数据概览"></section>
+
+      <section class="dashboard-module-control" id="dashboardModuleControls">
+        <label>选择分析模块
+          <select id="dashboardModuleFilter">
+            <option value="all">清除模块筛选 · 展示全部</option>
+            <option value="anomaly">月度预警</option>
+            <option value="trend">销售趋势</option>
+            <option value="employee">员工销售贡献</option>
+            <option value="office">办事处贡献</option>
+            <option value="product">产品贡献</option>
+            <option value="orders">下单盒数分布</option>
+            <option value="activity">活动量化</option>
+            <option value="alignment">月度贡献与变化</option>
+            <option value="customers">客户周产出</option>
+            <option value="address">收货地址 Top 10</option>
+            <option value="hospital">医院成长潜力</option>
+            <option value="signals">信息预警</option>
+          </select>
+        </label>
+      </section>
+
+      <details class="chart-card anomaly-card" id="salesAnomalyCard" data-dashboard-module="anomaly">
+        <summary class="section-heading">
+          <div><p class="eyebrow">月度预警</p><h2>科室产出下滑提醒</h2></div>
+          <span class="muted" id="anomalyPeriodLabel"></span>
+        </summary>
+        <div class="anomaly-list" id="salesAnomalyList"></div>
+      </details>
+
+      <div class="dashboard-empty" id="dashboardEmpty" hidden>
+        <div class="empty-icon">↗</div>
+        <h3>还没有销售数据</h3>
+        <p>直接导入原始 Excel、CSV 或 TSV，系统会自动识别有效字段并生成分析。</p>
+      </div>
+
+      <section class="chart-grid" id="dashboardCharts">
+        <article class="chart-card chart-wide" data-dashboard-module="trend">
+          <div class="section-heading">
+            <div><p class="eyebrow">销售变化</p><h2 id="trendTitle">销售趋势</h2></div>
+            <span class="muted" id="trendSummary"></span>
+          </div>
+          <div class="chart-stage" id="salesTrendChart"></div>
+        </article>
+
+        <article class="chart-card" data-dashboard-module="employee">
+          <div><p class="eyebrow">团队结构</p><h2>员工销售贡献占比</h2><span class="muted">点击员工查看医院、科室构成</span></div>
+          <div class="bar-chart" id="employeeContributionChart"></div>
+        </article>
+
+        <article class="chart-card" data-dashboard-module="office">
+          <div><p class="eyebrow">组织维度</p><h2>办事处数量贡献</h2></div>
+          <div class="bar-chart" id="officeContributionChart"></div>
+        </article>
+
+        <article class="chart-card" data-dashboard-module="product">
+          <div><p class="eyebrow">产品结构</p><h2>产品数量贡献</h2></div>
+          <div class="bar-chart" id="productContributionChart"></div>
+        </article>
+
+        <article class="chart-card" data-dashboard-module="orders">
+          <div><p class="eyebrow">订单结构</p><h2>单次下单盒数分布</h2></div>
+          <div class="bar-chart" id="orderSizeChart"></div>
+        </article>
+
+        <article class="chart-card" data-dashboard-module="activity">
+          <div><p class="eyebrow">投入产出</p><h2>活动量化</h2></div>
+          <div class="bar-chart" id="activityEfficiencyChart"></div>
+        </article>
+
+        <article class="chart-card chart-wide" data-dashboard-module="alignment">
+          <div class="section-heading">
+            <div><p class="eyebrow">专员 × 产品 × 月</p><h2>月度贡献与变化</h2></div>
+            <span class="muted">订单数、盒数、单次下单及环比 · 显示前 15 组</span>
+          </div>
+          <div class="table-wrap"><table class="analysis-table"><thead><tr><th>专员 / 产品 / 月</th><th>订单数</th><th>盒数</th><th>单次平均</th><th>月内贡献</th><th>环比</th><th>关联任务</th></tr></thead><tbody id="alignmentTableBody"></tbody></table></div>
+        </article>
+
+        <article class="chart-card chart-wide" data-dashboard-module="customers">
+          <div class="section-heading">
+            <div><p class="eyebrow">客户 × 科室</p><h2>客户周产出归纳</h2></div>
+            <span class="muted">客户产出、科室销量、贡献占比与评级</span>
+          </div>
+          <div class="table-wrap"><table class="analysis-table"><thead><tr><th>医院 / 科室</th><th>客户</th><th>月产出</th><th>评级</th><th>科室盒数</th><th>贡献占比</th><th>关联性</th></tr></thead><tbody id="departmentCustomerBody"></tbody></table></div>
+        </article>
+
+        <article class="chart-card chart-wide" data-dashboard-module="address">
+          <div class="section-heading">
+            <div><p class="eyebrow">地址维度</p><h2>收货自提地址 Top 10</h2></div>
+            <span class="muted">按下单盒数排序</span>
+          </div>
+          <div class="bar-chart" id="addressContributionChart"></div>
+        </article>
+
+        <article class="chart-card chart-wide" data-dashboard-module="hospital">
+          <div class="section-heading">
+            <div><p class="eyebrow">医院维度</p><h2>医院成长潜力</h2></div>
+            <span class="muted">数量成长 35% · 规模 35% · 下单频次 20% · 任务覆盖 10%</span>
+          </div>
+          <div class="table-wrap"><table class="analysis-table"><thead><tr><th>医院</th><th>潜力分</th><th>数量变化</th><th>盒数</th><th>订单数</th><th>专员数</th><th>关联</th></tr></thead><tbody id="hospitalPotentialBody"></tbody></table></div>
+        </article>
+
+        <article class="chart-card chart-wide" data-dashboard-module="signals">
+          <div class="section-heading">
+            <div><p class="eyebrow">信息预警</p><h2>客户产出与任务数据对比</h2></div>
+            <span class="muted" id="signalCount"></span>
+          </div>
+          <div class="signal-list" id="dataSignals"></div>
+        </article>
+      </section>
+        </div>
+      </details>
+    </div>
+  </main>
+
+  <nav class="primary-mobile-nav" aria-label="一级导航">
+    <button class="primary-mobile-nav__item is-active" id="primaryTodoButton" type="button" data-primary-workspace="tasks" aria-current="page">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12 2.5 2.5L16 9"/></svg>
+      <span>待办项</span>
+    </button>
+    <button class="primary-mobile-nav__item" id="primaryActivityButton" type="button" data-primary-workspace="activities">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M8 3v4m8-4v4M3.5 10h17"/></svg>
+      <span>活动区</span>
+    </button>
+    <button class="primary-mobile-nav__item" id="primaryDatabaseButton" type="button" data-primary-workspace="database">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5.5" rx="7.5" ry="3"/><path d="M4.5 5.5v6c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3v-6m-15 6v6c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3v-6"/></svg>
+      <span>数据库</span>
+    </button>
+  </nav>
+
+  <dialog class="primary-nav-sheet" id="todoNavigationSheet" aria-label="待办项二级菜单">
+    <div class="primary-nav-menu" role="menu">
+      <button type="button" role="menuitem" data-task-secondary="detail"><strong>任务详情</strong></button>
+      <button type="button" role="menuitem" data-task-secondary="utility"><strong>复盘、提醒<br>与备份</strong></button>
+    </div>
+  </dialog>
+
+  <dialog class="primary-nav-sheet" id="databaseNavigationSheet" aria-label="数据库二级菜单">
+    <div class="primary-nav-menu" role="menu">
+      <button type="button" role="menuitem" data-database-destination="customer-profile"><strong>客户档案</strong></button>
+      <button type="button" role="menuitem" data-database-destination="sales-dashboard"><strong>销售数据</strong></button>
+    </div>
+  </dialog>
+
+  <dialog id="dataManagementDialog" class="filter-dialog data-management-dialog">
+    <div class="data-management-shell">
+      <div class="dialog-header">
+        <div><p class="eyebrow">二级入口</p><h2>数据管理</h2><p class="muted">导入、模板、目标与清空操作集中在这里。</p></div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button>
+      </div>
+      <section class="sales-target-editor">
+        <div class="sales-target-heading"><strong id="salesTargetLabel">月度目标设置（盒数）</strong><p class="muted">目标统一按盒数读取和保存；按财年、产品隔离。</p></div>
+        <div class="sales-target-context">
+          <label>财年<select id="salesTargetFiscalYear"></select></label>
+          <label>产品<select id="salesTargetProduct"><option value="Primary Product A">Primary Product A</option><option value="Primary Product B">Primary Product B</option></select></label>
+          <label>办事处（可选）<select id="salesTargetOffice"><option value="all">全部办事处</option><option value="Synthetic Office A">Synthetic Office A</option><option value="Synthetic Office B">Synthetic Office B</option></select></label>
+          <label>财年总目标<input id="salesTargetInput" type="number" min="0" step="0.01" placeholder="尚未设置"></label>
+        </div>
+        <div class="sales-target-months" id="salesTargetMonths" aria-label="按月目标"></div>
+        <div class="sales-target-toolbar">
+          <button class="button secondary" id="averageSalesTargetButton" type="button">平均拆分</button>
+          <button class="button secondary" id="copyPreviousSalesTargetButton" type="button">复制上一财年</button>
+          <span class="muted" id="salesTargetStatus">逐月录入，或先填全年目标再平均拆分。</span>
+          <button class="button" id="saveSalesTargetButton" type="button">确认并保存</button>
+        </div>
+      </section>
+      <div class="data-management-actions">
+        <button class="button" id="openImportButton" type="button">销售数据导入</button>
+        <button class="button" id="openPlanImportButton" type="button">4+3 计划导入</button>
+        <button class="button secondary" id="downloadTemplateButton" type="button">下载数据模板</button>
+        <button class="button danger" id="clearSalesDataButton" type="button">清空销售明细</button>
+      </div>
+      <section class="smart-sheet-status">
+        <div><strong>企业微信智能表格</strong><p id="smartSheetStatusText">SmartSheet Adapter 已就绪，等待授权配置</p></div>
+        <span id="smartSheetStatusBadge">未配置</span>
+      </section>
+      <section class="smart-sheet-config" aria-label="企业微信智能表格配置">
+        <label>企业 ID<input id="smartSheetCorpId" type="text" autocomplete="off" placeholder="corpId"></label>
+        <label>智能表格 ID<input id="smartSheetSheetId" type="text" autocomplete="off" placeholder="sheetId"></label>
+        <button class="button secondary" id="saveSmartSheetConfigButton" type="button">保存连接标识</button>
+        <small>这里只保存公开连接标识，不保存 Token、密钥或管理员凭据；正式同步仍需后续企业微信授权。</small>
+      </section>
+      <p class="muted data-source-detail" id="dataSourceDetail">Excel 导入与本地离线数据继续作为独立兜底链路。</p>
+      <div class="dialog-actions"><span class="spacer"></span><button class="button secondary" type="button" data-close-dialog>关闭</button></div>
+    </div>
+  </dialog>
+
+  <dialog id="customerUpgradeDialog" class="customer-upgrade-dialog">
+    <div class="customer-upgrade-shell">
+      <div class="dialog-header">
+        <div><p class="eyebrow">计划与实际闭环</p><h2>客户升级管理</h2><p class="muted">先预览匹配与等级校验，确认后才写入本机并参与拟合度、仪表盘和季度 PPT。</p></div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button>
+      </div>
+      <section class="customer-upgrade-import">
+        <div class="customer-upgrade-context">
+          <label>产品<select id="customerUpgradeProduct"><option value="Primary Product A">Primary Product A</option><option value="Primary Product B">Primary Product B</option></select></label>
+          <label>财年<input id="customerUpgradeFiscalYear" type="number" min="2024" max="2100"></label>
+          <label>月份<input id="customerUpgradeMonth" type="number" min="1" max="12"></label>
+          <label>读取客户管理 Excel<input id="customerUpgradeExcel" type="file" accept=".xlsx,.xls,.xlsm,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"></label>
+        </div>
+        <output id="customerUpgradePreviewStatus" class="import-result" aria-live="polite">尚未选择文件。文件只在本机解析，确认前不会写入。</output>
+        <div class="table-wrap" id="customerUpgradePreviewWrap" hidden><table class="analysis-table"><thead><tr><th>员工/客户</th><th>医院/科室</th><th>观念</th><th>销量等级</th><th>6月/7月/8月目标</th><th>匹配</th></tr></thead><tbody id="customerUpgradePreviewBody"></tbody></table></div>
+        <div class="dialog-actions"><button class="button secondary" id="cancelCustomerUpgradePreview" type="button">取消预览</button><span class="spacer"></span><button class="button" id="confirmCustomerUpgradeImport" type="button" disabled>确认导入</button></div>
+      </section>
+      <details class="customer-upgrade-manual"><summary>手工新增一条客户升级计划</summary>
+        <form id="customerUpgradeManualForm">
+          <div class="customer-upgrade-manual-grid">
+            <label>办事处<input id="upgradeOffice" required></label><label>员工<input id="upgradeEmployee" required></label>
+            <label>医院<input id="upgradeHospital" required></label><label>科室<input id="upgradeDepartment" required></label><label>客户<input id="upgradeCustomer" required></label>
+            <label>客户观念<select id="upgradePerception"><option value="R1">R1</option><option value="R2">R2</option><option value="R3">R3</option><option value="R4">R4</option></select></label>
+            <label>当前销量等级<select id="upgradeSalesGrade"><option value="D">D</option><option value="C">C</option><option value="B">B</option><option value="A">A</option></select></label>
+            <label>6月实际<input id="upgradeJuneActual" type="number" min="0"></label><label>7月实际<input id="upgradeJulyActual" type="number" min="0"></label><label>8月目标<input id="upgradeNextTarget" type="number" min="0"></label>
+            <label>学术投入<input id="upgradeAcademicInvestment"></label><label>存在问题<input id="upgradeProblem"></label><label>后续跟进<input id="upgradeFollowUp"></label>
+            <label>状态<select id="upgradeStatus"><option>待确认</option><option>进行中</option><option>已完成</option><option>需复核</option></select></label><label>备注<input id="upgradeNotes"></label>
+          </div>
+          <div class="dialog-actions"><span class="spacer"></span><button class="button" type="submit">保存计划</button></div>
+        </form>
+      </details>
+      <section><div class="archive-heading"><h3>已保存计划</h3><span class="muted" id="customerUpgradePlanCount"></span></div><div id="customerUpgradePlanList" class="customer-upgrade-plan-list"></div></section>
+    </div>
+  </dialog>
+
+  <dialog id="reportDialog" class="report-dialog">
+    <div class="report-dialog-shell">
+      <div class="dialog-header report-dialog-header">
+        <div>
+          <p class="eyebrow">季度汇报 · PPT V1</p>
+          <h2>生成可编辑季度 PPT</h2>
+          <p class="muted">直接复用销售仪表盘统一统计契约，生成 16:9、可下载、可编辑的季度汇报。</p>
+        </div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button>
+      </div>
+      <div class="report-toolbar">
+        <label>财年<select id="reportFiscalYear"></select></label>
+        <label>财季<select id="reportFiscalQuarter"><option value="1">Q1</option><option value="2">Q2</option><option value="3">Q3</option><option value="4">Q4</option></select></label>
+        <label>产品<select id="reportProduct"><option value="Primary Product A">Primary Product A</option><option value="Primary Product B">Primary Product B</option></select></label>
+        <label>截止日期<input id="reportReferenceDate" type="date"></label>
+        <button class="button secondary" id="generateReportButton" type="button">预览汇报</button>
+        <button class="button" id="downloadReportButton" type="button" disabled>生成季度PPT</button>
+      </div>
+      <output class="report-generation-status" id="reportGenerationStatus" aria-live="polite"></output>
+      <div class="report-summary" id="reportSummary" hidden></div>
+      <div class="report-material-grid" id="reportMaterialGrid"></div>
+      <div class="dialog-actions">
+        <span class="muted">图表优先使用 PowerPoint 原生图表，文本、图形与结论均可继续编辑。</span>
+        <span class="spacer"></span>
+        <button class="button secondary" type="button" data-close-dialog>关闭</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="filterDialog" class="filter-dialog">
+    <form method="dialog" id="filterForm">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">集成筛选</p>
+          <h2>查找和筛选任务</h2>
+        </div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button>
+      </div>
+      <div class="search-wrap">
+        <span aria-hidden="true">⌕</span>
+        <input id="searchInput" type="search" placeholder="搜索事项、地点或备注" aria-label="搜索事项">
+      </div>
+      <select id="categoryFilter" data-wheel-skip hidden aria-label="按类别筛选"><option value="all">全部类别</option></select>
+      <select id="statusFilter" data-wheel-skip hidden aria-label="按状态筛选">
+        <option value="all">全部状态</option>
+        <option value="doing" selected>进行中</option>
+        <option value="done">已完成</option>
+      </select>
+      <select id="markerFilter" data-wheel-skip hidden aria-label="按任务标记筛选">
+        <option value="all">全部标记</option>
+        <option value="urgent">仅紧急事项</option>
+        <option value="longTerm">仅长期追踪</option>
+      </select>
+      <div class="form-grid task-advanced-filters">
+        <label>来源
+          <select id="taskSourceFilter" data-wheel-skip>
+            <option value="all">全部来源</option>
+            <option value="manual">自建任务</option>
+            <option value="activity">活动任务</option>
+            <option value="customer">客户任务</option>
+            <option value="hospital">医院维护</option>
+          </select>
+        </label>
+        <label>详细状态
+          <select id="taskCanonicalStatusFilter" data-wheel-skip>
+            <option value="all">全部详细状态</option>
+            <option value="pending">待处理</option>
+            <option value="in_progress">进行中</option>
+            <option value="overdue">已逾期</option>
+            <option value="completed">已完成</option>
+            <option value="cancelled">已取消</option>
+          </select>
+        </label>
+      </div>
+      <p class="hint">日期、类别和标记请在今日晨报中切换；这里用于关键词、来源与详细状态筛选。</p>
+      <div class="dialog-actions">
+        <button class="button secondary" id="clearTaskFiltersButton" type="button">清除筛选</button>
+        <button class="text-button synonym-settings-button" id="synonymSettingsButton" type="button">同义词</button>
+        <span class="spacer"></span>
+        <button class="button" type="button" data-close-dialog>关闭</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="synonymDialog" class="filter-dialog synonym-dialog">
+    <form method="dialog" id="synonymForm">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">隐藏设置</p>
+          <h2>同义词更正</h2>
+        </div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button>
+      </div>
+      <p class="hint">积累语音错字、医院简称或自定义别名；识别和保存时会自动替换。</p>
+      <div class="synonym-editor">
+        <label>输入词
+          <input id="synonymSource" maxlength="80" autocomplete="off" placeholder="Synthetic Example">
+        </label>
+        <label>更正为
+          <input id="synonymTarget" maxlength="120" autocomplete="off" placeholder="Synthetic Example">
+        </label>
+        <button class="button" type="submit">保存</button>
+      </div>
+      <div class="synonym-list" id="synonymList"></div>
+      <div class="dialog-actions">
+        <span class="spacer"></span>
+        <button class="button secondary" type="button" data-close-dialog>完成</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="wheelPickerDialog" class="wheel-picker-dialog">
+    <form method="dialog">
+      <div class="dialog-header wheel-picker-header">
+        <button class="text-button" type="button" data-close-dialog>取消</button>
+        <h2 id="wheelPickerTitle">选择</h2>
+        <button class="text-button" id="wheelPickerConfirm" type="button" hidden>确定</button>
+      </div>
+      <div class="wheel-picker-list" id="wheelPickerList" role="listbox"></div>
+    </form>
+  </dialog>
+
+  <dialog id="multiPickerDialog" class="wheel-picker-dialog multi-picker-dialog">
+    <form method="dialog">
+      <div class="dialog-header wheel-picker-header">
+        <button class="text-button" type="button" data-close-dialog>取消</button>
+        <h2 id="multiPickerTitle">选择医院</h2>
+        <button class="text-button" id="multiPickerConfirm" type="button" hidden>确定</button>
+      </div>
+      <div class="search-wrap multi-picker-search-wrap">
+        <span aria-hidden="true">⌕</span>
+        <input id="multiPickerSearch" type="search" autocomplete="off" placeholder="输入部分名称搜索">
+      </div>
+      <p class="multi-picker-count" id="multiPickerCount">已选择 0 项</p>
+      <div class="wheel-picker-list multi-wheel-list" id="multiPickerList" role="listbox" aria-multiselectable="true"></div>
+    </form>
+  </dialog>
+
+  <dialog id="taskDialog">
+    <form method="dialog" id="taskForm">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow" id="taskDialogSourceLabel">自建任务</p>
+          <h2 id="taskDialogTitle">新建其他任务</h2>
+        </div>
+        <div class="task-header-actions"><button class="task-withdraw-arrow" type="button" id="withdrawTaskRecommendationButton" aria-label="撤回建议" title="撤回建议" hidden>↶</button><button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button></div>
+      </div>
+      <input type="hidden" id="taskId">
+      <label>要做什么（可粘贴长文字）
+        <textarea id="taskTitle" required maxlength="2000" rows="4" placeholder="Synthetic Example"></textarea>
+      </label>
+      <div class="recognition-tools">
+        <label class="image-input-label">上传图片
+          <input id="taskImageInput" type="file" accept="image/*">
+        </label>
+        <button class="button secondary" id="recognizeTaskButton" type="button">识别文字并填入</button>
+        <p class="recognition-status" id="taskRecognitionStatus" aria-live="polite">可输入或语音转写文字，也可选择截图、照片；读取时会匹配预设选项。</p>
+      </div>
+      <div class="form-grid">
+        <label>类别
+          <select id="taskCategory" required></select>
+        </label>
+        <label>截止时间
+          <input id="taskDue" type="datetime-local">
+          <small class="task-due-weekday" id="taskDueWeekday" hidden></small>
+        </label>
+        <label>地点
+          <input id="taskLocation" maxlength="100" placeholder="可留空">
+        </label>
+        <input id="taskProgress" type="hidden" value="0">
+        <label>拜访周期（天，可留空待判断）<input id="taskVisitInterval" type="number" min="1" max="365"></label>
+        <label>任务进度（%）<input id="taskVisitProgress" type="number" min="0" max="100"></label>
+        <output id="progressOutput" hidden>进行中</output>
+        <div id="taskStagePicker" hidden></div>
+        <label id="taskOfficeEmployeeWrap">办事处 / 信息员
+          <input id="taskOfficeEmployee" list="officeEmployeeOptions" maxlength="100" placeholder="Synthetic Example">
+          <input id="taskOffice" type="hidden">
+          <input id="taskEmployee" type="hidden">
+        </label>
+        <div class="linked-field-row" id="taskHospitalDepartmentRow">
+          <label><span id="taskHospitalLabel">医院（可多选）</span>
+            <div class="multi-entry"><input id="taskHospitalEntry" maxlength="120" autocomplete="off" placeholder="输入部分名称搜索"><button type="button" data-open-multi="taskHospital">选择</button></div>
+            <input id="taskHospital" type="hidden"><div class="multi-chips" id="taskHospitalChips"></div>
+          </label>
+          <label><span id="taskDepartmentLabel">科室（可多选）</span>
+            <div class="multi-entry"><input id="taskDepartmentEntry" maxlength="100" autocomplete="off" placeholder="先选医院再选科室"><button type="button" data-open-multi="taskDepartment">选择</button></div>
+            <input id="taskDepartment" type="hidden"><div class="multi-chips" id="taskDepartmentChips"></div>
+          </label>
+        </div>
+        <label id="taskCustomerWrap"><span id="taskCustomerLabel">客户（可多选）</span>
+          <div class="multi-entry"><input id="taskCustomerEntry" list="customerOptions" maxlength="100" placeholder="输入后添加"><button type="button" data-add-multi="taskCustomer">添加</button></div>
+          <input id="taskCustomer" type="hidden"><div class="multi-chips" id="taskCustomerChips"></div>
+        </label>
+        <label id="taskProductWrap">产品
+          <input id="taskProduct" list="productOptions" maxlength="100">
+        </label>
+        <div class="customer-profile-fields" id="taskCustomerProfileFields" hidden>
+          <label>职称
+            <input id="taskCustomerJobTitle" maxlength="50" placeholder="Synthetic Example">
+          </label>
+          <label>管床数
+            <input id="taskManagedBeds" type="number" min="0" step="1" inputmode="numeric" placeholder="由您补充">
+          </label>
+          <label>客户类型
+            <input id="taskCustomerType" maxlength="50" placeholder="Synthetic Example">
+          </label>
+        </div>
+        <div class="customer-excel-import" id="taskCustomerExcelWrap" hidden>
+          <label class="image-input-label">读取客户拜访 Excel
+            <input id="taskCustomerExcelInput" type="file" accept=".xlsx,.xls,.xlsm,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
+          </label>
+          <p class="recognition-status" id="taskCustomerExcelStatus" aria-live="polite">支持办事处、员工、医院、科室、客户、产品等字段，空白续行会自动继承。</p>
+        </div>
+        <label id="taskWeeklyOutputWrap" hidden>客户周产出 <span class="muted" id="taskWeeklyOutputWeek"></span>
+          <span class="weekly-output-controls">
+            <select id="taskWeeklySlot" data-wheel-skip aria-label="客户周产出周次">
+              <option value="W1">W1</option><option value="W2">W2</option><option value="W3">W3</option><option value="W4">W4</option>
+            </select>
+            <input id="taskWeeklyOutput" type="number" min="0" step="1" inputmode="decimal" placeholder="填写产出">
+          </span>
+        </label>
+      </div>
+      <div class="check-row">
+        <label class="check-label"><input id="taskUrgent" type="checkbox"> 紧急事项</label>
+        <label class="check-label"><input id="taskLongTerm" type="checkbox"> 长期追踪</label>
+      </div>
+      <label>工作说明 / 下一步
+        <textarea id="taskNotes" rows="4" maxlength="1000" placeholder="记录当前进展、下一步动作或需要跟进的人"></textarea>
+      </label>
+      <div class="dialog-actions">
+        <button class="button danger" type="button" id="deleteTaskButton" hidden>删除</button>
+        <button class="button ghost" type="button" id="cancelNativeTaskButton" hidden>取消任务</button>
+        <span class="spacer"></span>
+        <button class="button secondary" type="button" data-close-dialog>取消</button>
+        <button class="button" type="submit">保存任务</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="importDialog">
+    <form method="dialog" id="importForm">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">销售原始数据</p>
+          <h2>本地解析销售 Excel</h2>
+        </div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button>
+      </div>
+      <p class="hint">文件只在本机解密和解析。系统自动识别表头，仅保留Primary Product A、Primary Product B，剔除已取消订单，并按“订单数量－退货数量”计算净销售盒数。</p>
+      <label>选择文件
+        <input type="file" id="salesDataInput" accept=".xlsx,.xls,.xlsm,.csv,.tsv,.txt,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv,text/tab-separated-values">
+      </label>
+      <label id="salesPasswordWrap" hidden>文件密码
+        <input type="password" id="salesDataPassword" autocomplete="off" placeholder="默认先尝试文件名（不含扩展名）">
+        <small class="hint">密码仅用于本次本机解密，不保存、不上传、不写入日志。</small>
+      </label>
+      <label>也可粘贴表格内容
+        <textarea id="salesDataPaste" rows="8" placeholder="日期,员工,产品,医院,科室,客户,下单盒数,销售金额,拜访次数,活动类型,活动金额,活动时长"></textarea>
+      </label>
+      <div class="import-result" id="importResult" aria-live="polite">尚未选择文件。确认前不会写入正式数据。</div>
+      <section class="sales-import-preview" id="salesImportPreview" hidden>
+        <div class="import-kpi-grid" id="salesImportKpis"></div>
+        <div class="import-breakdown-grid"><article><h3>产品净销量</h3><div id="salesImportProducts"></div></article><article><h3>月份净销量</h3><div id="salesImportMonths"></div></article></div>
+        <details><summary>查看解析明细</summary><div class="table-wrap"><table class="analysis-table"><thead><tr><th>日期</th><th>产品</th><th>办事处</th><th>医院 / 科室</th><th>订单</th><th>退货</th><th>净销量</th><th>匹配</th></tr></thead><tbody id="salesImportDetailBody"></tbody></table></div></details>
+      </section>
+      <div class="dialog-actions">
+        <button class="button secondary" id="cancelSalesImportPreview" type="button">取消</button>
+        <span class="spacer"></span>
+        <button class="button secondary" id="previewSalesImportButton" type="submit">解析预览</button>
+        <button class="button" id="confirmSalesImportButton" type="button" disabled>确认导入</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="planImportDialog" class="plan-import-dialog">
+    <div class="plan-import-shell">
+      <div class="dialog-header">
+        <div><p class="eyebrow">4+3 / 四定表</p><h2>计划执行分析</h2><p class="muted">自动读取(4+3)、(客户管理)，并用数据透视表交叉校验；确认前不写入。</p></div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button>
+      </div>
+      <section class="plan-import-toolbar">
+        <label>选择 Excel<input id="planDataInput" type="file" accept=".xlsx,.xls,.xlsm,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"></label>
+        <label id="planPasswordWrap" hidden>文件密码<input id="planDataPassword" type="password" autocomplete="off"><small>只在本机当前操作中使用。</small></label>
+        <button class="button secondary" id="previewPlanImportButton" type="button">解析预览</button>
+        <button class="button" id="confirmPlanImportButton" type="button" disabled>确认导入</button>
+        <button class="button secondary" id="cancelPlanImportPreview" type="button">取消</button>
+      </section>
+      <output id="planImportStatus" class="import-result" aria-live="polite">尚未选择文件。</output>
+      <section id="planImportPreview" hidden>
+        <div class="import-kpi-grid" id="planImportQualityKpis"></div>
+        <p class="plan-cross-check" id="planCrossCheckStatus"></p>
+      </section>
+      <section id="planAnalysisPanel" hidden>
+        <div class="plan-filter-grid">
+          <label>财年<select id="planFiscalYearFilter"></select></label><label>月份<select id="planMonthFilter"></select></label><label>产品<select id="planProductFilter"><option value="all">全部</option><option value="Primary Product A">Primary Product A</option><option value="Primary Product B">Primary Product B</option></select></label><label>办事处<select id="planOfficeFilter"></select></label><label>员工<select id="planEmployeeFilter"></select></label><label>医院<select id="planHospitalFilter"></select></label><label>科室<select id="planDepartmentFilter"></select></label>
+        </div>
+        <div class="import-kpi-grid plan-analysis-kpis" id="planAnalysisKpis"></div>
+        <div class="plan-chart-grid">
+          <article><h3>员工目标 vs 实际</h3><div class="plan-bar-chart" id="planEmployeeTargetChart"></div></article>
+          <article><h3>员工达成率</h3><div class="plan-bar-chart" id="planEmployeeRateChart"></div></article>
+          <article><h3>月度计划变化</h3><div class="table-wrap"><table class="analysis-table"><thead><tr><th>员工</th><th>上月实际</th><th>本月目标</th><th>本月实际</th><th>下月目标</th></tr></thead><tbody id="planMonthlyBody"></tbody></table></div></article>
+          <article><h3>医院 / 科室目标执行</h3><div class="table-wrap"><table class="analysis-table"><thead><tr><th>医院 / 科室</th><th>目标</th><th>实际</th><th>差额</th><th>达成率</th></tr></thead><tbody id="planHospitalBody"></tbody></table></div></article>
+          <article><h3>客户计划执行</h3><div class="table-wrap"><table class="analysis-table"><thead><tr><th>客户</th><th>医院 / 科室</th><th>目标</th><th>实际</th><th>差额</th><th>下月目标</th></tr></thead><tbody id="planCustomerBody"></tbody></table></div></article>
+          <article><h3>资源配置标签</h3><div class="plan-tag-list" id="planResourceTags"></div><h3>未达标原因标签</h3><div class="plan-tag-list" id="planReasonTags"></div></article>
+          <article class="plan-tag-correction"><h3>标签人工修正</h3><p class="muted">保留原始文字，仅覆盖系统统计使用的主标签。</p><div class="table-wrap"><table class="analysis-table"><thead><tr><th>员工 / 客户</th><th>原始内容</th><th>资源主标签</th><th>原因主标签</th></tr></thead><tbody id="planTagCorrectionBody"></tbody></table></div></article>
+        </div>
+      </section>
+    </div>
+  </dialog>
+
+  <dialog id="activityDialog" class="activity-dialog" aria-labelledby="activityDialogTitle">
+    <form method="dialog" id="activityForm" novalidate>
+      <div class="dialog-header activity-editor-header"><div><p class="eyebrow">活动申请</p><h2 id="activityDialogTitle">新建活动申请</h2><p class="muted">自动字段来自合成销售数据和合成目录；公共表单使用独立生成的通用格式。</p></div><div class="activity-header-actions"><button class="icon-button" type="button" data-close-activity-editor data-close-dialog aria-label="关闭">×</button><button class="button danger activity-delete-action" id="deleteActivityButton" type="button" hidden>删除草稿</button></div></div>
+      <input id="activityId" type="hidden">
+      <input id="activityActualLocation" type="hidden"><input id="activityActualPerCapita" type="hidden"><input id="activityActualMeal" type="hidden"><input id="activityActualGift" type="hidden"><input id="activityActualSpeaker" type="hidden">
+      <div class="activity-validation-message" id="activityValidationMessage" role="alert" hidden></div>
+
+      <section class="activity-form-section" aria-labelledby="activityBasicTitle"><div class="activity-section-number">1</div><div class="activity-form-body"><div class="activity-section-heading"><div><h3 id="activityBasicTitle">基本信息</h3><p>确定会议日期、类型与推广内容</p></div><output id="activityMeetingMonth" aria-label="会议月份">—</output></div><div class="activity-form-grid activity-basic-grid">
+        <label>会议日期<span aria-hidden="true"> *</span><input id="activityDate" type="date" required></label>
+        <label>申请日期<span aria-hidden="true"> *</span><input id="activityApplicationDate" type="date" required></label>
+        <label>会议类型<span aria-hidden="true"> *</span><select id="activityType"><option>科室会</option><option>内训会</option><option>病例收集</option><option>圆桌会</option><option>片区会</option><option>第三方赞助会</option><option>全国会</option></select></label>
+        <label>产品<span aria-hidden="true"> *</span><select id="activityProduct"></select></label>
+        <label>申请状态<select id="activityApprovalStatus"><option value="草稿">草稿</option><option value="已提交">已提交</option><option value="审批中">审批中</option><option value="已通过">已通过</option><option value="已取消">已取消</option></select></label>
+        <label class="activity-full-row">推广主题<span aria-hidden="true"> *</span><input id="activityTopic" required></label>
+        <div class="activity-template-notice activity-full-row" id="activityTemplateNotice" role="status" hidden>当前活动类型暂无原模板，仅支持保存草稿和数据管理，暂不生成申请表。</div>
+      </div></div></section>
+
+      <section class="activity-form-section" aria-labelledby="activityHospitalTitle"><div class="activity-section-number">2</div><div class="activity-form-body"><div class="activity-section-heading"><div><h3 id="activityHospitalTitle">医院与科室</h3><p>医院支持按名称或编码搜索</p></div><div class="activity-context-actions"><button type="button" data-open-activity-context="hospital">医院资料</button><button type="button" data-open-activity-context="sales">销售上下文</button></div></div><div class="activity-form-grid activity-hospital-grid">
+        <div class="activity-field"><label for="activityHospital">医院<span aria-hidden="true"> *</span></label><div class="activity-hospital-picker"><input id="activityHospital" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="activityHospitalCandidates" autocomplete="off" placeholder="输入Synthetic Hospital Example或编码" required><div id="activityHospitalCandidates" class="activity-hospital-candidates" role="listbox" hidden></div></div></div>
+        <label>编码<input id="activityHospitalCode" inputmode="numeric" placeholder="选择医院后自动带出"></label>
+        <div class="activity-field"><label for="activityHospitalLevel">医院级别</label><span class="activity-inline-input"><input id="activityHospitalLevel" placeholder="待补充 / 未核验"><button class="text-button" id="searchHospitalLevelButton" type="button">联网核对</button></span></div>
+        <div class="activity-field"><label for="activityDepartment">科室<span aria-hidden="true"> *</span></label><div class="activity-hospital-picker"><input id="activityDepartment" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="activityDepartmentCandidates" autocomplete="off" placeholder="搜索或填写科室" required><div id="activityDepartmentCandidates" class="activity-hospital-candidates" role="listbox" hidden></div></div></div>
+        <div class="activity-field"><label for="activityDepartmentDirector">科室主任</label><div class="activity-person-picker"><input id="activityDepartmentDirector" placeholder="搜索本医院/科室人员" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="activityDepartmentDirectorCandidates" autocomplete="off"><div id="activityDepartmentDirectorCandidates" class="activity-person-candidates" role="listbox" hidden></div></div></div>
+      </div></div></section>
+
+      <details id="activityFactProvenance" class="activity-fact-provenance"><summary>查看销售 / 学术消耗来源</summary></details>
+      <section class="activity-form-section" aria-labelledby="activityMeetingTitle"><div class="activity-section-number">3</div><div class="activity-form-body"><div class="activity-section-heading"><div><h3 id="activityMeetingTitle">会议信息</h3><p>讲者优先关联客户档案，并执行公司员工排除规则</p></div></div><div class="activity-form-grid activity-meeting-grid">
+        <div class="activity-field activity-speaker-field"><label for="activitySpeaker">讲者</label><div class="activity-person-picker"><input id="activitySpeaker" placeholder="搜索本医院/科室人员" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="activitySpeakerCandidates" autocomplete="off"><div id="activitySpeakerCandidates" class="activity-person-candidates" role="listbox" hidden></div></div></div>
+        <label>参会人数<input id="activityAttendees" type="number" min="0" step="1" placeholder="请输入人数"></label>
+        <label>关联源计划<select id="activitySourcePlan"><option value="">未关联计划</option></select><small>按真实 4+3 计划关联；主任与讲者角色独立。</small></label>
+        <label>办事处<select id="activityOffice"><option value="">请选择办事处</option><option value="Synthetic Office A">Synthetic Office A</option><option value="Synthetic Office B">Synthetic Office B</option></select></label><label>产品剂型<input id="activityDosageForm"></label>
+        <p class="activity-form-note activity-full-row" id="activitySpeakerProfileNote">请选择明确的稳定人员身份；编辑草稿不会创建正式人员关系。</p>
+      </div></div></section>
+
+      <section class="activity-form-section" aria-labelledby="activityLinkageTitle"><div class="activity-section-number">4</div><div class="activity-form-body"><div class="activity-section-heading"><div><h3 id="activityLinkageTitle">数据联动</h3><p>下列值沿用 V1 已验收规则，只读展示</p></div><div class="activity-context-actions"><span class="activity-auto-badge">自动计算</span><button type="button" data-open-activity-context="sales">查看销售</button><button type="button" data-open-activity-context="task">关联任务</button></div></div><div class="activity-derived-grid">
+        <article><span>科室当前销量</span><strong id="activityCurrentSales">0 盒</strong><small>活动月份上月</small></article>
+        <article><span>科室目标销量</span><strong id="activityTargetSales">—</strong><small>真实 4+3 计划目标</small></article>
+        <article><span>达成时间</span><strong id="activityTargetMonth">—</strong><small>源计划期间</small></article>
+        <article><span>最近完整月销售</span><strong id="activityMonthlySales">—</strong><small id="activitySalesObservationMonth">—</small><small id="activitySalesScope">待选择医院</small></article>
+        <article><span>近期月均销售</span><strong id="activityAverageSales">—</strong><small><span id="activityAverageSalesMonths">最近有效历史月份</span></small></article>
+        <article><span>本财年累计预算</span><strong id="activityFiscalBudgetTotal">—</strong><small id="activityExpenseCounts">历史活动预算，不计入实际消耗</small></article>
+        <article><span>本财年已知实际学术消耗</span><strong id="activityFiscalExpenseTotal">—</strong><small id="activityExpenseCompleteness">待核验费用完整性</small></article>
+        <article class="activity-actual-reimbursement"><span>历史实际核销金额</span><strong id="activityActualReimbursementTotal">—</strong><small id="activityActualReimbursementSource">历史活动实际核销费用</small></article>
+        <article><span id="activityFiscalSalesPeriod">销售观察财年累计金额</span><strong id="activityFiscalSalesAmount">—</strong><small id="activityFiscalSalesQuantity">累计销量待确认</small><small>同医院、同产品、销售观察期间</small></article>
+        <article><span>上财年同期销售金额</span><strong id="activityPriorFiscalSalesAmount">—</strong><small>相同时间跨度</small></article>
+        <article><span>同比</span><strong id="activityYoY">—</strong></article>
+        <article><span>费效比</span><strong id="activityCostEfficiency">—</strong><small id="activityEfficiencyCompleteness">实际费用 / 累计销售金额</small></article>
+      </div>
+      <details id="activityDataEvidence" hidden><summary>查看数据证据（开发模式）</summary><pre></pre></details>
+      <details class="activity-more-fields" open><summary>申请表预算与其他字段</summary><div class="activity-form-grid activity-budget-grid">
+        <label>人均餐标<input id="activityBudgetPerCapita" type="number" min="0" step="0.01"></label><label>餐费<input id="activityBudgetMeal" type="number" min="0" step="0.01"></label><label>礼品<input id="activityBudgetGift" type="number" min="0" step="0.01"></label><label>讲课费<input id="activityBudgetSpeaker" type="number" min="0" step="0.01"></label><label>费用合计<output id="activityBudgetTotal">¥0</output></label>
+        <label>原执行进度<select id="activityStatus"><option>草稿</option><option>资料完整</option><option>待执行</option><option>执行中</option><option>已完成</option><option>已复盘</option><option>暂停</option><option>已取消</option></select></label>
+        <label>请示编号（手工更新）<input id="activityRequestNumber"></label><label>会议召开城市<input id="activityMeetingCity" placeholder="用户确认的城市"></label>
+        <label class="activity-wide">情况说明<textarea id="activitySituationExplanation" rows="5" placeholder="自主填写请示正文；不自动生成医院事实或审批结论"></textarea></label>
+        <label class="activity-wide">费效比销售数据行（可审阅修改）<textarea id="activitySalesExplanationLine" rows="3"></textarea></label><p id="activitySalesExplanationSource" class="activity-form-note activity-full-row"></p>
+        <label class="activity-wide">备注<textarea id="activityRemarks" rows="3"></textarea></label>
+      </div></details></div></section>
+
+      <div class="dialog-actions activity-editor-actions"><span class="spacer"></span><button class="button secondary activity-desktop-cancel" type="button" data-close-activity-editor data-close-dialog>取消</button><button class="button secondary" type="submit" data-save-intent="draft">保存草稿</button><button class="button" id="exportActivityButton" type="button">保存并生成申请表</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="activityImportDialog" class="activity-import-dialog" aria-labelledby="activityImportDialogTitle">
+    <form method="dialog"><div class="dialog-header"><div><p class="eyebrow">导入预览</p><h2 id="activityImportDialogTitle">确认活动与费用数据</h2></div><button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button></div><output class="import-result" id="activityImportStatus">正在识别…</output><div class="table-wrap"><table class="analysis-table"><thead><tr><th>类型</th><th>医院/编码</th><th>科室</th><th>产品</th><th>预算</th></tr></thead><tbody id="activityImportRows"></tbody></table></div><div class="dialog-actions"><button class="button secondary" type="button" data-close-dialog>取消</button><span class="spacer"></span><button class="button" id="confirmActivityImport" type="button" disabled>确认导入</button></div></form>
+  </dialog>
+
+  <dialog id="contextChoiceDialog" class="context-choice-dialog" aria-labelledby="contextChoiceTitle">
+    <form method="dialog"><div class="dialog-header"><div><p class="eyebrow">上下文匹配</p><h2 id="contextChoiceTitle">请选择客户档案</h2></div><button class="icon-button" value="cancel" aria-label="关闭">×</button></div><p class="muted" id="contextChoiceHint"></p><div class="context-choice-list" id="contextChoiceList"></div><div class="dialog-actions"><button class="button secondary" value="cancel">取消</button></div></form>
+  </dialog>
+
+  <datalist id="activityHospitalOptions"></datalist>
+  <datalist id="activityCustomerOptions"></datalist>
+  <datalist id="officeEmployeeOptions"></datalist>
+  <datalist id="employeeOptions"></datalist>
+  <datalist id="hospitalOptions"></datalist>
+  <datalist id="departmentOptions"></datalist>
+  <datalist id="customerOptions"></datalist>
+  <datalist id="productOptions"></datalist>
+
+  <dialog id="salesDrilldownDialog">
+    <form method="dialog">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">销售构成</p>
+          <h2 id="salesDrilldownTitle">员工销售明细</h2>
+        </div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button>
+      </div>
+      <p class="hint" id="salesDrilldownSummary"></p>
+      <div class="table-wrap"><table class="analysis-table"><thead><tr><th>医院</th><th>科室</th><th>盒数</th><th>订单</th><th>占比</th></tr></thead><tbody id="salesDrilldownBody"></tbody></table></div>
+      <div class="dialog-actions"><span class="spacer"></span><button class="button" type="button" data-close-dialog>关闭</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="weeklyDialog">
+    <form method="dialog" id="weeklyForm">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">周五复盘</p>
+          <h2>确认本周，安排下周</h2>
+        </div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button>
+      </div>
+      <div id="weeklyTaskSummary"></div>
+      <label>本周补充说明
+        <textarea id="weeklyNotes" rows="3" placeholder="成果、问题、需要继续跟进的事项"></textarea>
+      </label>
+      <label>下周新增工作（每行一项）
+        <textarea id="nextWeekTasks" rows="5" placeholder="制作客户拜访计划&#10;更新医院科室信息"></textarea>
+      </label>
+      <div class="dialog-actions">
+        <button class="button secondary" type="button" data-close-dialog>稍后处理</button>
+        <button class="button" type="submit">确认并加入下周</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="cloudDialog">
+    <form method="dialog" id="cloudForm">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">私有云同步</p>
+          <h2>电脑与手机保持一致</h2>
+        </div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button>
+      </div>
+      <div class="cloud-status-card" id="cloudDialogStatus" data-state="local" aria-live="polite">本地模式</div>
+      <div class="cloud-auth-fields">
+        <label>登录邮箱
+          <input id="cloudEmail" type="email" inputmode="email" autocomplete="username" placeholder="user@example.invalid">
+        </label>
+        <label>密码
+          <span class="password-input-row"><input id="cloudPassword" type="password" autocomplete="current-password" minlength="8" placeholder="至少 8 位"><button class="text-button" type="button" id="toggleCloudPassword" aria-label="显示密码">显示</button></span>
+        </label>
+        <div class="cloud-remember-options">
+          <label><input id="rememberCloudAccount" type="checkbox" checked> 记住账号</label>
+          <label><input id="rememberCloudPassword" type="checkbox" checked> 在本机安全记住密码</label>
+        </div>
+        <p class="hint" id="cloudCredentialHint">Android 使用系统安全密钥加密保存密码；网页端仅记住账号，不保存密码。</p>
+      </div>
+      <div class="dialog-actions cloud-actions">
+        <button class="button secondary" type="button" id="cloudSignUpButton">注册</button>
+        <button class="button" type="button" id="cloudSignInButton">登录并同步</button>
+        <button class="button secondary" type="button" id="cloudSyncButton" hidden>立即同步</button>
+        <button class="button secondary" type="button" id="cloudOfflineButton" hidden>主动在线同步</button>
+        <button class="button danger" type="button" id="cloudSignOutButton" hidden>退出云账号</button>
+      </div>
+      <p class="hint">应用每次启动默认离线，本机数据可直接使用且无需登录。需要跨设备更新时，点击“主动在线同步”；关闭并重新打开后会再次回到离线模式。</p>
+      <section class="cloud-health-panel" aria-label="云服务健康状态">
+        <div class="cloud-health-heading">
+          <div><small>云服务</small><strong id="cloudHealthStatus" data-state="UNKNOWN">尚未检查</strong></div>
+          <button class="button secondary compact-button" type="button" id="cloudHealthCheckButton">立即检查</button>
+        </div>
+        <div class="cloud-health-times">
+          <span>上次成功连接：<b id="cloudHealthLastSuccess">暂无</b></span>
+          <span>上次检查：<b id="cloudHealthLastCheck">暂无</b></span>
+        </div>
+        <p class="hint" id="cloudHealthHint">健康检查在本地数据加载后异步执行，不影响离线使用。</p>
+      </section>
+      <details class="developer-settings" id="developerOptions" hidden>
+        <summary>开发者选项</summary>
+        <label>当前连接服务
+          <input id="developerCloudEndpoint" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://服务地址">
+        </label>
+        <p class="hint">只允许填写不含账号、密码、密钥、查询参数的 HTTPS 站点地址。</p>
+        <div class="dialog-actions developer-actions">
+          <button class="button secondary" type="button" id="saveDeveloperEndpointButton">保存地址</button>
+          <button class="button secondary" type="button" id="testDeveloperEndpointButton">测试连接</button>
+          <button class="button secondary" type="button" id="restoreDefaultEndpointButton">恢复默认</button>
+        </div>
+        <output class="developer-connection-status" id="developerConnectionStatus" aria-live="polite">尚未测试</output>
+      </details>
+      <section class="app-update-panel" aria-label="应用版本与更新">
+        <div class="app-update-heading">
+          <p class="about-version">当前版本 · <button class="text-button version-tap-button" id="appVersionButton" type="button" aria-label="应用版本 1.1.0，版本代码 2">版本 1.1.0（2）</button></p>
+          <button class="button secondary compact-button" id="checkUpdateButton" type="button">检查更新</button>
+        </div>
+        <output class="update-check-status" id="updateCheckStatus" aria-live="polite">尚未检查更新</output>
+        <div class="update-available" id="updateAvailable" hidden>
+          <strong id="availableVersion"></strong>
+          <p id="releaseNotes"></p>
+          <button class="button primary compact-button update-download-button" id="downloadUpdateButton" type="button">下载更新</button>
+          <progress class="update-download-progress" id="updateDownloadProgress" max="100" value="0" hidden></progress>
+          <output class="update-download-status" id="updateDownloadStatus" aria-live="polite"></output>
+        </div>
+      </section>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script src="public-runtime-config.js" defer></script>
+  <script src="cloud-config.js" defer></script>
+  <script src="directory-data.js" defer></script>
+  <script src="cloud-sync.js" defer></script>
+  <script src="workspace-navigation.js" defer></script>
+  <script src="vendor/xlsx.full.min.js" defer></script>
+  <script src="vendor/crypto-js.js" defer></script>
+  <script src="vendor/xlsx-populate.min.js" defer></script>
+  <script src="vendor/tesseract/tesseract.min.js" defer></script>
+  <script src="public-synthetic-data.js" defer></script>
+  <script src="product-registry.js" defer></script>
+  <script src="reporting.js" defer></script>
+  <script src="vendor/pptxgen.bundle.js" defer></script>
+  <script src="quarterly-ppt.js" defer></script>
+  <script src="smart-sheet-adapter.js" defer></script>
+  <script src="customer-upgrade-adapter.js" defer></script>
+  <script src="excel-local-reader.js" defer></script>
+  <script src="department-identity.js" defer></script>
+  <script src="deletion-policy.js" defer></script>
+  <script src="sales-import-adapter.js" defer></script>
+  <script src="four-three-plan-adapter.js" defer></script>
+  <script src="dashboard-v2.js" defer></script>
+  <script src="customer-profile/customer-profile.js" defer></script>
+  <script src="activity-template-assets.js" defer></script>
+  <script src="activity-draft-store.js" defer></script>
+  <script src="activity-draft-ui.js" defer></script>
+  <script src="activity-center.js" defer></script>
+  <script src="activity-task-adapter.js" defer></script>
+  <script src="hospital-master.js" defer></script>
+  <script src="hospital-identity.js" defer></script>
+  <script src="hospital-maintenance-adapter.js" defer></script>
+  <script src="task-progress-adapter.js" defer></script>
+  <script src="task-progress-v2.js" defer></script>
+  <script src="shared-persistence.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>

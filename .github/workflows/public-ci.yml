@@ -1,0 +1,95 @@
+name: Public Product Safety and Functional Equivalence
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: public-product-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  scoped-public-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+      - name: Static safety before package installation
+        run: node scripts/public-safety.cjs
+      - name: Generic product alias boundary before dependencies
+        run: node scripts/public-alias-boundary.cjs
+      - name: Public catalogue boundary
+        run: node scripts/public-product-boundary.cjs
+      - name: Locked public dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Workflow syntax and policy
+        run: node scripts/workflow-check.cjs
+      - name: Independent public Office templates
+        run: node scripts/generate-documents.cjs
+      - name: Web build
+        run: npm run build
+      - name: Built resource alias boundary
+        run: node scripts/public-alias-boundary.cjs
+      - name: Hospital Identity Task Activity Customer Sales Fiscal contracts
+        run: npm test
+      - name: Real standard-runner Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Chromium startup offline boundary and narrow viewports
+        run: node scripts/browser-capabilities.cjs
+      - name: Activity lifecycle failure recovery and Identity crossover Gate
+        run: node scripts/browser-equivalence.cjs
+      - name: Activity CREATE/EDIT draft recovery and actual process restart
+        run: node scripts/browser-draft-recovery.cjs
+      - name: Auditable runtime source license closure
+        run: node scripts/build-notices.cjs
+      - name: Static source and built-output safety
+        run: node scripts/public-safety.cjs
+  full-product-equivalence:
+    needs: scoped-public-gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+      - name: Verify declared complete-product equivalence Gate
+        run: node scripts/full-equivalence-gate.cjs
+# No schedule, workflow_run, pull_request_target, privileged environment, secrets,
+# package publication, remote mutation or artifact uploads. Success uploads nothing.
+# Full-product status is accepted only with the actual contract and browser checks above.
+
+  android-public-test-build:
+    needs: scoped-public-gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@0b6dd653ba04f4f93bf581ec31e66cbd7dcb644d
+        with:
+          gradle-version: '8.9'
+          cache-disabled: true
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: node scripts/generate-documents.cjs
+      - run: npm run build
+      - run: node scripts/native-test-fixtures.cjs
+      - run: node scripts/android-assets.cjs
+      - run: gradle --no-daemon --console=plain -p android-app :app:assemblePublicValidation :app:testPublicValidationUnitTest
+      - name: Packaged Web alias boundary
+        run: node scripts/public-alias-boundary.cjs android-app/app/build/outputs/apk/publicValidation/app-publicValidation-unsigned.apk
+# Unsigned publicValidation only. No private signer, SDK-device-reality or artifact uploads.

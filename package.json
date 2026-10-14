@@ -1,0 +1,34 @@
+{
+  "name": "schedule-notes-clean-local",
+  "version": "0.0.0-local",
+  "private": true,
+  "description": "Local-first Schedule Notes with synthetic demonstration data",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "node scripts/build.cjs",
+    "test": "node --test --test-isolation=none tests/*.test.cjs",
+    "test:browser": "node scripts/browser-test.cjs",
+    "test:documents": "node --test tests/documents.test.cjs",
+    "start": "node server.js",
+    "ci:static": "node scripts/public-safety.cjs && node scripts/workflow-check.cjs",
+    "test:contracts": "node --test --test-isolation=none tests/engine-load.test.cjs tests/product.test.cjs tests/focused-contracts.test.cjs tests/hospital-universe.test.cjs",
+    "test:synthetic": "node --test tests/synthetic.test.cjs",
+    "ci:readiness": "node scripts/full-equivalence-gate.cjs",
+    "build:dependencies": "node scripts/build-dependencies.cjs"
+  },
+  "devDependencies": {
+    "jszip": "3.10.1",
+    "playwright": "1.55.1",
+    "yaml": "2.8.1",
+    "browserify": "17.0.1"
+  },
+  "dependencies": {
+    "crypto-js": "4.2.0",
+    "pptxgenjs": "4.0.1",
+    "xlsx-populate": "1.21.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  },
+  "license": "Apache-2.0"
+}
