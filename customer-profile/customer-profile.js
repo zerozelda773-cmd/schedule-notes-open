@@ -504,7 +504,7 @@
     return `cus_${(hash >>> 0).toString(36)}`;
   }
   function profileKey(profile) {
-    return `${profile.customerId}::${profile.product}`;
+    return `${profile.customerId || profile.sourceProjectionKey || 'unbound'}::${profile.product}`;
   }
   function shiftMonth(month, offset) {
     const [year, monthNumber] = String(month).split('-').map(Number);
@@ -693,6 +693,37 @@
     const level = String(value || '').trim().toUpperCase();
     return /^R[1-4]$/.test(level) ? level : '';
   }
+  const TRUSTED_CUSTOMER_ORIGINS = new Set(['LOCAL_MASTER','EXCEL_IMPORT','HUMAN_REVIEW','TASK_ENTRY','ACTIVITY_APPLICATION_DRAFT','LOCAL_FOLLOWUP','MANUAL_STATUS']);
+  function customerMasterIdentity(record = {}, records = []) {
+    const original = String(record.customerId || '');
+    const bad = !original || original !== original.trim() || record.active === false || !TRUSTED_CUSTOMER_ORIGINS.has(record.source) || ['UNRESOLVED','CANDIDATE','LEGACY_UNSCOPED'].includes(record.identityStatus) || records.filter(row => String(row.customerId || '') === original).length !== 1;
+    return {status:bad?'UNRESOLVED':'RESOLVED',customerId:bad?null:original,originalCustomerId:original,source:record.source || 'LEGACY_UNSCOPED'};
+  }
+  function resolveCustomerIdentity(record = {}, masters = [], decisions = {}) {
+    const original = String(record.originalCustomerId ?? record.customerId ?? '');
+    const result = {status:'UNKNOWN',originalCustomerId:original,resolvedCustomerId:null,reasonCodes:[],candidateIds:[]};
+    const uncertain = [record.identityStatus,record.customerMatchStatus,record.matchType,record.masterMatch?.matchType].some(v=>['UNRESOLVED','CANDIDATE','LEGACY_UNSCOPED','PROBABLE','AMBIGUOUS','UNMATCHED','PENDING','FUZZY'].includes(v));
+    const mapping = decisions[matchSignature({hospital:record.hospital || record.hospitalName,department:record.department || record.departmentName,name:record.customer || record.canonicalName})];
+    if (!original) { if(mapping){result.status='CANDIDATE';result.candidateIds=[mapping];} result.reasonCodes.push('NO_ORIGINAL_BINDING'); return result; }
+    const match = masters.filter(row => String(row.customerId || '') === original);
+    if (uncertain || original !== original.trim() || match.length !== 1 || customerMasterIdentity(match[0],masters).status !== 'RESOLVED' || mapping && mapping !== original) {result.status='UNRESOLVED';result.reasonCodes.push('MASTER_OR_BINDING_UNRELIABLE');return result;}
+    const binding=record.identitySource || record;
+    const native=binding.sourceType==='customer' && binding.taskType==='customer_visit' && String(binding.sourceId || '')===original && String(binding.customerId || '')===original;
+    const direct=record.customerName !== undefined && record.source === match[0].source;
+    if (!native && !direct) {result.status='UNRESOLVED';result.reasonCodes.push('ORIGINAL_SOURCE_NOT_VERIFIED');return result;}
+    result.status='RESOLVED';result.resolvedCustomerId=original;return result;
+  }
+  function projectPerception(observations = [], identity, product, masters = [], decisions = {}) {
+    const kept=JSON.parse(JSON.stringify(observations));const out={status:'UNKNOWN',value:null,product:PRODUCTS.includes(product)?product:null,observations:kept,reasonCodes:[]};
+    if (identity?.status !== 'RESOLVED') {out.status=identity?.status==='UNRESOLVED'?'UNRESOLVED':'UNKNOWN';out.reasonCodes.push('IDENTITY_UNRESOLVED');return out;}
+    if (!out.product) {out.reasonCodes.push('PRODUCT_UNRESOLVED');return out;}
+    const scoped=kept.filter(row=>row.structured && row.product===out.product && row.sourceKind!=='LEGACY_MASTER' && resolveCustomerIdentity(row,masters,decisions).resolvedCustomerId===identity.resolvedCustomerId);
+    const levels=new Set(scoped.map(row=>normalizePerceptionLevel(row.value)).filter(Boolean));
+    if (levels.size>1) {out.status='UNRESOLVED';out.reasonCodes.push('CONFLICTING_OBSERVATIONS');}
+    else if(levels.size===1) {out.status='OBSERVED';out.reasonCodes.push('R_FIELD_AUTHORITY_UNVERIFIED');}
+    else out.reasonCodes.push('NO_SCOPED_OBSERVATION');
+    return out;
+  }
   function permanentCustomerId(idFactory) {
     if (typeof idFactory === 'function') return idFactory();
     if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return `cus_${crypto.randomUUID()}`;
@@ -723,6 +754,7 @@
     return {
       // Loading an existing record never invents authority. Explicit create allocates the ID.
       customerId: String(input.customerId || ''),
+      ...(input.identityStatus ? {identityStatus:String(input.identityStatus)} : {}),
       customerName,
       aliases: uniqueValues(splitList(input.aliases || input.customerAliases).filter(alias => normalizedAlias(alias) !== normalizedAlias(customerName))),
       hospital,
@@ -753,7 +785,7 @@
       notes: String(input.notes || '').trim(),
       createdAt: String(input.createdAt || now),
       updatedAt: String(input.updatedAt || now),
-      source: String(input.source || 'LOCAL_MASTER'),
+      source: String(input.source || 'LEGACY_UNSCOPED'),
       active: input.active !== false
     };
   }
@@ -794,6 +826,7 @@
   }
   function validateMasterRecord(record) {
     const errors = [];
+    if (!record.customerId || record.customerId !== record.customerId.trim()) errors.push('需要明确有效的客户身份');
     if (!record.customerName) errors.push('客户姓名不能为空');
     if (!record.hospital) errors.push('医院不能为空');
     if (!record.department) errors.push('科室不能为空');
@@ -805,18 +838,17 @@
     const now = options.now || (() => new Date().toISOString());
     const stored = readStoredJson(storage, MASTER_STORAGE_KEY, null);
     const storedRecords = Array.isArray(stored) ? stored : Array.isArray(stored?.records) ? stored.records : null;
-    let records = (storedRecords || options.seedRecords || []).map(record => normalizeMasterRecord(record, {
-      now: record.updatedAt || now(),
-      idFactory: options.idFactory
-    }));
+    const originalRows = new WeakMap();
+    const loadRows = rows => rows.map(raw => {const row=normalizeMasterRecord(raw,{now:raw.updatedAt || now()});originalRows.set(row,JSON.parse(JSON.stringify(raw)));return row;});
+    let records = loadRows(storedRecords || options.seedRecords || []);
+    const serialize = () => records.map(row=>JSON.parse(JSON.stringify(originalRows.get(row) || row)));
     function persist(persistOptions = {}) {
-      storage?.setItem(MASTER_STORAGE_KEY, JSON.stringify({
-        schemaVersion: MASTER_SCHEMA_VERSION,
-        records
-      }));
+      const payload=Array.isArray(stored)?serialize():{...(stored || {schemaVersion:MASTER_SCHEMA_VERSION}),records:serialize()};
+      const encoded=JSON.stringify(payload);let equal=false;try{equal=JSON.stringify(JSON.parse(storage?.getItem(MASTER_STORAGE_KEY)))===encoded;}catch{}
+      if(!equal)storage?.setItem(MASTER_STORAGE_KEY,encoded);
       if (!persistOptions.silent) options.onChange?.();
     }
-    if ((!stored || Number(stored?.schemaVersion) !== MASTER_SCHEMA_VERSION) && records.length) persist();
+    if (!stored && options.seedRecords?.length && records.length) persist();
     function list(listOptions = {}) {
       const includeInactive = listOptions.includeInactive !== false;
       return records.filter(record => includeInactive || record.active).map(record => ({
@@ -828,7 +860,9 @@
       }));
     }
     function get(customerId) {
-      return list().find(record => record.customerId === customerId) || null;
+      if (!String(customerId || '').trim()) return null;
+      const matches=list().filter(record=>record.customerId===customerId);
+      return matches.length===1?matches[0]:null;
     }
     function create(input, createOptions = {}) {
       if (input.perceptionLevel && !/^R[1-4]$/i.test(String(input.perceptionLevel).trim())) throw new Error('观念等级必须是 R1-R4');
@@ -881,6 +915,7 @@
       next.createdAt = previous.createdAt;
       const errors = validateMasterRecord(next);
       if (errors.length) throw new Error(errors.join('；'));
+      originalRows.set(next,{...(originalRows.get(previous) || {}),...next});
       records[index] = next;
       persist();
       return get(customerId);
@@ -902,18 +937,12 @@
     }
     function seed(seedRecords = []) {
       if (records.length || !seedRecords.length) return false;
-      records = seedRecords.map(record => normalizeMasterRecord(record, {
-        now: record.updatedAt || now(),
-        idFactory: options.idFactory
-      }));
+      records = loadRows(seedRecords);
       persist();
       return true;
     }
     function replace(nextRecords = [], replaceOptions = {}) {
-      records = nextRecords.map(record => normalizeMasterRecord(record, {
-        now: record.updatedAt || now(),
-        idFactory: options.idFactory
-      }));
+      records = loadRows(nextRecords);
       persist({
         silent: Boolean(replaceOptions.silent)
       });
@@ -929,6 +958,7 @@
       seed,
       replace,
       persist,
+      serialize,
       storageKey: MASTER_STORAGE_KEY,
       schemaVersion: MASTER_SCHEMA_VERSION
     };
@@ -1175,18 +1205,12 @@
   function hydrateProfilesFromMaster(profiles = [], masterRecords = [], decisions = {}, options = {}) {
     const byId = new Map(masterRecords.map(record => [record.customerId, record]));
     const hydrated = profiles.map(profile => {
-      const uncertainState = [profile.customerMatchStatus, profile.matchType, profile.masterMatch?.matchType].map(value => String(value || '').toUpperCase()).find(value => ['UNRESOLVED', 'PROBABLE', 'AMBIGUOUS', 'UNMATCHED', 'PENDING', 'FUZZY'].includes(value));
-      let master = uncertainState ? null : byId.get(profile.customerId);
-      let match = uncertainState ? {matchType: uncertainState, customerId: profile.customerId || '', resolvedBy: 'UNCONFIRMED'} : null;
-      if (!master && !uncertainState) {
-        match = matchMasterRecord({
-          hospital: profile.hospitalName,
-          department: profile.departmentName,
-          name: profile.canonicalName
-        }, masterRecords, decisions);
-        // A display-text match is only a candidate; an explicit saved decision may bind it.
-        if (match.matchType === 'EXACT' && match.resolvedBy === 'MANUAL_MAPPING') master = byId.get(match.customerId);
-      }
+      const identity=resolveCustomerIdentity(profile,masterRecords,decisions);
+      const master=identity.status==='RESOLVED'?byId.get(identity.resolvedCustomerId):null;
+      const match={matchType:identity.status==='RESOLVED'?'EXACT':([profile.customerMatchStatus,profile.matchType,profile.masterMatch?.matchType].find(v=>['UNRESOLVED','PROBABLE','AMBIGUOUS','UNMATCHED','PENDING','FUZZY'].includes(v)) || identity.status),customerId:identity.resolvedCustomerId || profile.customerId || '',resolvedBy:identity.status==='RESOLVED'?'STABLE_ID':'UNCONFIRMED'};
+      const observations=[...(profile.perceptionObservations || []),{...profile,value:normalizePerceptionLevel(profile.perceptionLevel),structured:Boolean(normalizePerceptionLevel(profile.perceptionLevel)),sourceKind:'SOURCE_RECORD'},...(master?.perceptionLevel?[{customerId:master.customerId,product:null,value:master.perceptionLevel,structured:true,sourceKind:'LEGACY_MASTER'}]:[])];
+      const perceptionProjection=projectPerception(observations,identity,profile.product,masterRecords,decisions);
+      profile={...profile,identityProjection:identity,perceptionProjection,perceptionLevel:perceptionProjection.value || ''};
       if (!master) return {
         ...profile,
         masterMatch: match,
@@ -1220,7 +1244,7 @@
     if (options.includeUnrepresented !== true) return hydrated;
     const represented = new Set(hydrated.map(profile => profile.customerId));
     for (const master of masterRecords) {
-      if (represented.has(master.customerId)) continue;
+      if (represented.has(master.customerId) || customerMasterIdentity(master,masterRecords).status !== 'RESOLVED') continue;
       const products = master.associatedProducts?.length ? master.associatedProducts : [null];
       for (const product of products) hydrated.push({
         customerId: master.customerId,
@@ -1235,7 +1259,8 @@
         employeeId: master.employeeId,
         employeeName: master.employee,
         product,
-        perceptionLevel: master.perceptionLevel || '',
+        perceptionLevel: '',
+        perceptionProjection:{status:'UNKNOWN',value:null,product,observations:master.perceptionLevel?[{customerId:master.customerId,value:master.perceptionLevel,product:null,sourceKind:'LEGACY_MASTER'}]:[],reasonCodes:['NO_SCOPED_OBSERVATION']},
         currentStatus: 'UNKNOWN',
         monthlyActuals: [],
         monthlyTargets: [],
@@ -3199,7 +3224,7 @@
         const upgradeOpportunity = Boolean(latestPlan && !/完成|已完成/.test(String(latestPlan.executionStatus || ''))) || latestValue !== null && gradeDistances(latestValue).toUpgrade !== null && gradeDistances(latestValue).toUpgrade <= 3 && ['CULTIVATING', 'PRIORITY'].includes(developmentStatus);
         const importance = calculateOperatingImportance({
           ...master,
-          perceptionLevel: master.perceptionLevel || profile.perceptionLevel
+          perceptionLevel: profile.perceptionProjection?.value || ''
         }, stats, professionalByCustomer.get(customerId) || {}, {
           salesGrade,
           currentStatus,
@@ -3219,7 +3244,7 @@
           departmentId: master.departmentId || profile.departmentId || '',
           product,
           salesGrade,
-          perceptionLevel: master.perceptionLevel || profile.perceptionLevel || '',
+          perceptionLevel: profile.perceptionProjection?.value || '',
           developmentStatus,
           currentStatus,
           active: master.active !== false,
@@ -3814,7 +3839,9 @@
   function buildProfilesFromAppData(records = [], tasks = [], options = {}) {
     const resolver = safeGradeResolver(options.gradeResolver);
     const groups = new Map();
+    let observationSequence=0;
     function ensureProfile(source) {
+      const projectionOrder=++observationSequence;
       const customer = String(source.customer || '').trim();
       const hospital = String(source.hospital || '').trim();
       const department = String(source.department || source.departmentRoom || '').trim();
@@ -3830,10 +3857,16 @@
         sourceDepartmentId: source.sourceDepartmentId,
         provenance: source.departmentProvenance
       });
-      const customerId = source.customerId || stableId([hospital, department, customer, employee]);
-      const key = `${customerId}::${product}`;
+      const customerId = String(source.customerId || '');
+      const observationKey = String(source.id || source.sourceRecordId || 'observation-'+(++observationSequence));
+      const key = customerId ? `${customerId}::${product}` : `unbound:${observationKey}:${projectionOrder}::${product}`;
       if (!groups.has(key)) groups.set(key, {
         customerId,
+        originalCustomerId: customerId,
+        sourceRecordId: observationKey,
+        sourceProjectionKey: customerId ? customerId : `unbound:${observationKey}:${projectionOrder}`,
+        identitySource: JSON.parse(JSON.stringify(source)),
+        perceptionObservations: [],
         canonicalName: customer,
         aliases: source.customerAliases || [],
         employeeId: source.employeeId || stableId(['employee', employee]),
@@ -3867,12 +3900,11 @@
           customerType: source.customerType || ''
         }
       });
-      return {
-        key,
-        profile: groups.get(key),
-        product,
-        customerId
-      };
+      const profile=groups.get(key);
+      if(source.sourceType==='customer' && source.taskType==='customer_visit' && String(source.sourceId || '')===customerId) profile.identitySource=JSON.parse(JSON.stringify(source));
+      const explicit=normalizePerceptionLevel(source.perceptionLevel), heuristic=!explicit?String(source.awareness || source.notes || '').match(/R[1-4]/i)?.[0]?.toUpperCase() || '':'';
+      if(explicit || heuristic)profile.perceptionObservations.push({...JSON.parse(JSON.stringify(source)),product,value:explicit || heuristic,structured:Boolean(explicit),sourceKind:'SOURCE_RECORD'});
+      return {key,profile,product,customerId};
     }
     const rows = (records || []).filter(record => String(record.customer || '').trim() && PRODUCTS.includes(String(record.product || '').trim()));
     rows.forEach(record => {
@@ -3919,7 +3951,7 @@
         });
       });
       const perception = `${task.perceptionLevel || task.awareness || task.notes || ''}`.match(/R[1-4]/i)?.[0]?.toUpperCase();
-      if (perception) profile.perceptionLevel = perception;
+      // Heuristic R text remains an observation, never operational authority.
       profile.legacyProfile = {
         customerJobTitle: task.customerJobTitle || profile.legacyProfile?.customerJobTitle || '',
         managedBeds: task.managedBeds ?? profile.legacyProfile?.managedBeds ?? '',
@@ -3942,7 +3974,7 @@
       if (!recentValues.length) profile.currentStatus = 'INSUFFICIENT_DATA';else if (latestValue === 0 && finite(previousValue) > 0) profile.currentStatus = 'AT_RISK';else if (previousGrade && SALES_GRADE_ORDER[latestGrade] > SALES_GRADE_ORDER[previousGrade]) profile.currentStatus = 'UPGRADED';else if (previousGrade && SALES_GRADE_ORDER[latestGrade] < SALES_GRADE_ORDER[previousGrade]) profile.currentStatus = 'DOWNGRADED';else if (streak(recentValues, 'down') >= 2) profile.currentStatus = 'DECLINING';else if (streak(recentValues, 'up') >= 2) profile.currentStatus = 'GROWING';
       const customerTasks = (tasks || []).filter(task => String(task.customer || '').trim() === profile.canonicalName && task.product === profile.product);
       const perception = customerTasks.map(task => `${task.perceptionLevel || task.awareness || task.notes || ''}`.match(/R[1-4]/i)?.[0]?.toUpperCase()).find(Boolean);
-      if (perception) profile.perceptionLevel = perception;
+      // Group labels cannot create field-specific R authority.
     });
     return [...groups.values()];
   }
@@ -4076,7 +4108,7 @@
     };
     const masterStore = createCustomerMasterStore({
       storage,
-      seedRecords: seedMasterRecords(seedProfiles),
+      seedRecords: (forcedDemo || globalThis.WORK_PROGRESS_PUBLIC_RUNTIME?.syntheticDemo === true) ? seedMasterRecords(rawFixtureProfiles).map(row=>({...row,source:'HUMAN_REVIEW'})) : [],
       onChange: notifyMasterChange
     });
     const developmentStore = createDevelopmentStore({
@@ -4510,7 +4542,7 @@
         departmentId: master.departmentId,
         departmentName: master.department,
         departmentAliases: master.departmentAliases,
-        perceptionLevel: master.perceptionLevel || 'R?',
+        perceptionLevel: 'R?',
         office: '',
         currentSalesGrade: 'D',
         currentStatus: 'INSUFFICIENT_DATA',
@@ -4636,7 +4668,7 @@
           hospitalName: master.hospital,
           departmentId: master.departmentId,
           departmentName: master.department,
-          perceptionLevel: master.perceptionLevel || 'R?',
+          perceptionLevel: 'R?',
           currentSalesGrade: 'D',
           currentStatus: 'INSUFFICIENT_DATA',
           product: state.product,
@@ -4659,7 +4691,7 @@
           departmentId: master.departmentId,
           department: master.department || profile.departmentName,
           employee: master.employee || profile.employeeName,
-          perceptionLevel: master.perceptionLevel || profile.perceptionLevel || 'R?',
+          perceptionLevel: profile.perceptionProjection?.value || '' || 'R?',
           salesGrade: metrics.grade || profile.currentSalesGrade || 'D',
           developmentStatus: development.status,
           currentStatus: profile.currentStatus || 'INSUFFICIENT_DATA',
@@ -5526,8 +5558,8 @@
     }
     function openHospitalById(hospitalIdOrName) {
       const target = String(hospitalIdOrName || '').trim();
-      const hospital = hospitalDirectory().find(item => [item.hospitalId, item.hospitalName].some(value => String(value || '').trim() === target));
-      if (!hospital) return false;
+      const hospital = globalThis.WorkspaceNavigation.exactHospital(target, hospitalDirectory());
+      if (!hospital) { state.maintenanceHospitalId=''; root.querySelector('#cpHospitalMaintenanceDialog')?.close(); return false; }
       state.panel = null;
       state.selectedKey = null;
       state.mode = 'hospitals';
@@ -7077,7 +7109,7 @@
         rawLiveProfiles = buildProfilesFromAppData(data.records || [], data.tasks || [], {
           gradeResolver: resolver
         });
-        if (!masterStore.list().length && rawLiveProfiles.length) masterStore.seed(seedMasterRecords(rawLiveProfiles));
+        // Reading imported/live observations never creates a Master record.
         liveProfiles = hydrateProfilesFromMaster(rawLiveProfiles, masterStore.list(), matchDecisions, {
           includeUnrepresented: true
         });
@@ -7269,9 +7301,7 @@
       exportSyncState() {
         const development = developmentStore.exportState();
         return {
-          customers: masterStore.list({
-            includeInactive: true
-          }),
+          customers: masterStore.serialize(),
           customerFollowUps: followUpStore.list({
             includeDeleted: true
           }),
@@ -7352,6 +7382,9 @@
     employeeIdentityId: name => String(name || '').trim() ? stableId(['employee', name]) : '',
     seedMasterRecords,
     normalizeMasterRecord,
+    customerMasterIdentity,
+    resolveCustomerIdentity,
+    projectPerception,
     matchSignature,
     matchMasterRecord,
     analyzeCustomerImport,

@@ -30,6 +30,8 @@ jobs:
         run: node scripts/generate-documents.cjs
       - name: Web build
         run: npm run build
+      - name: Focused synthetic Fiscal MoM boundary contracts
+        run: node --test tests/fiscal-mom-projection.test.cjs
       - name: Hospital Identity Task Activity Customer Sales Fiscal contracts
         run: npm test
       - name: Real standard-runner Chromium
@@ -40,6 +42,10 @@ jobs:
         run: node scripts/browser-equivalence.cjs
       - name: Activity CREATE/EDIT draft recovery and actual process restart
         run: node scripts/browser-draft-recovery.cjs
+      - name: Public product identity navigation and cache contracts
+        run: node scripts/browser-product-contracts.cjs
+      - name: Public product final route restore and functional smoke
+        run: node scripts/browser-product-smoke.cjs
       - name: Auditable runtime source license closure
         run: node scripts/build-notices.cjs
       - name: Static source and built-output safety

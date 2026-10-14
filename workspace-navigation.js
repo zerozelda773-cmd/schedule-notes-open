@@ -93,6 +93,12 @@
     }
     return patch;
   }
+  function exactHospital(id, records = []) {
+    const key = String(id || '').trim();
+    if (!key) return null;
+    const valid = records.filter(row => row.hospitalId === key && row.active !== false && !row.deletedAt);
+    return valid.length === 1 ? clone(valid[0]) : null;
+  }
   function create(options = {}) {
     const browserHistory = options.history || (typeof history !== 'undefined' ? history : null);
     const browserWindow = options.window || (typeof window !== 'undefined' ? window : null);
@@ -100,6 +106,20 @@
     let currentEntry = null;
     let sequence = 0;
     let edgeStart = null;
+    function contextRoute(contract) {
+      const base = '#workspace/' + contract.destination;
+      return contract.destination === 'hospital-context'
+        ? base + '?hospitalId=' + encodeURIComponent(contract.context.hospital?.id || '')
+        : base;
+    }
+    function currentHospitalRoute() {
+      const hash = browserWindow?.location?.hash || '';
+      const [route, query = ''] = hash.split('?');
+      if (route !== '#workspace/hospital-context') return null;
+      const id = new URLSearchParams(query).get('hospitalId');
+      return id && id === id.trim() ? id : null;
+    }
+    function clearContext() { currentEntry = null; }
     function historyState(entry) {
       return {
         ...(browserHistory?.state || {}),
@@ -107,7 +127,8 @@
           schemaVersion: 1,
           type: 'workspace-context',
           destination: entry.contract.destination,
-          entryId: entry.id
+          entryId: entry.id,
+          ...(entry.contract.destination === 'hospital-context' ? {hospitalEntry:clone(entry)} : {})
         }
       };
     }
@@ -122,7 +143,7 @@
         id: `workspace-sales-${Date.now()}-${++sequence}`,
         contract,
         sourceWorkspace,
-        sourceSnapshot: clone(metadata.sourceSnapshot ?? options.captureSnapshot?.(sourceWorkspace) ?? null),
+        sourceSnapshot: clone(hasOwn(metadata, 'sourceSnapshot') ? metadata.sourceSnapshot : options.captureSnapshot?.(sourceWorkspace) ?? null),
         viewPayload: clone(metadata.viewPayload || null),
         title: text(metadata.title),
         meta: text(metadata.meta),
@@ -130,7 +151,7 @@
       };
       entries.set(entry.id, entry);
       showEntry(entry);
-      const url = metadata.url || `#workspace/${contract.destination}`;
+      const url = metadata.url || contextRoute(contract);
       if (metadata.historyMode !== 'replace' && browserHistory?.pushState) browserHistory.pushState(historyState(entry), '', url);else if (browserHistory?.replaceState) browserHistory.replaceState(historyState(entry), '', url);
       return clone(entry);
     }
@@ -152,7 +173,7 @@
       };
       entries.set(entry.id, entry);
       showEntry(entry);
-      const url = metadata.url || `#workspace/${entry.contract.destination}`;
+      const url = metadata.url || contextRoute(entry.contract);
       browserHistory?.replaceState?.(historyState(entry), '', url);
       return clone(entry);
     }
@@ -209,12 +230,33 @@
       restoreSource(currentEntry);
       return true;
     }
-    function handlePopState(event) {
-      const state = event?.state?.workspaceNavigation;
-      if (event?.state?.workspaceNavigationLocalRoute && options.handlePopState?.(event)) return true;
-      if (state?.type === 'workspace-context' && entries.has(state.entryId)) {
-        showEntry(entries.get(state.entryId));
+    function restoreHospitalHistory(record = browserHistory?.state) {
+      const id = currentHospitalRoute();
+      if (!id) return false;
+      const frame = record?.workspaceNavigation, cached = frame?.hospitalEntry;
+      const bound = frame?.schemaVersion === SCHEMA_VERSION && frame.type === 'workspace-context'
+        && frame.destination === 'hospital-context' && cached?.id === frame.entryId
+        && cached?.contract?.destination === 'hospital-context'
+        && ['tasks','activities','customers'].includes(cached.sourceWorkspace)
+        && cached.contract.context?.hospital?.id === id;
+      if (!bound) {
+        // The explicit route remains authoritative; unavailable source context returns to the directory.
+        openContext({destination:'hospital-context',source:{module:'customer',entityType:'none'},context:{hospital:{id}}},
+          {sourceWorkspace:'customers',sourceSnapshot:null,viewPayload:{hospitalId:id},historyMode:'replace'});
         return true;
+      }
+      const entry = {...clone(cached),contract:normalizeContract(cached.contract)};
+      entries.set(entry.id,entry);showEntry(entry);return true;
+    }
+    function handlePopState(event) {
+      const frame = event?.state?.workspaceNavigation;
+      if (frame?.destination === 'hospital-context') {
+        if (currentHospitalRoute()) return restoreHospitalHistory(event?.state);
+        clearContext();return Boolean(options.handlePopState?.(event));
+      }
+      if (event?.state?.workspaceNavigationLocalRoute && options.handlePopState?.(event)) return true;
+      if (frame?.type === 'workspace-context' && entries.has(frame.entryId)) {
+        showEntry(entries.get(frame.entryId));return true;
       }
       if (currentEntry) return handleBack('popstate');
       return Boolean(options.handlePopState?.(event));
@@ -267,6 +309,8 @@
       handleBack,
       handlePopState,
       syncSourceSnapshot,
+      restoreHospitalHistory,
+      clearContext,
       install,
       destroy,
       getCurrentEntry: () => clone(currentEntry)
@@ -278,6 +322,7 @@
     normalizeContext,
     normalizeContract,
     resolvedFilterPatch,
+    exactHospital,
     customerMatchStatus,
     isReliableCustomerMatch,
     create
