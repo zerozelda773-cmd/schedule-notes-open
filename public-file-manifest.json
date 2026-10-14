@@ -9,7 +9,7 @@
     },
     {
       "path": ".github/workflows/public-ci.yml",
-      "sha256": "0f584369be3ed027095afb977254afc33cc7c72636b8b5413ec84f1bd8a54336"
+      "sha256": "15d364cc4ae3f0bd31c47609fc418e3846ff9f6d128fdfa44c4234f0990a9c14"
     },
     {
       "path": ".gitignore",
@@ -149,7 +149,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "cfc02b497e426c3086ea215a17fb4bbc1ac55c41cf9af226e7d8c8fa3c134163"
+      "sha256": "f1f9754f84b2b31051e1622587155e8134ae870afaa73b13682616c92802bece"
     },
     {
       "path": "assets/activity-templates/academic-request.docx",
@@ -218,6 +218,10 @@
     {
       "path": "directory-data.js",
       "sha256": "0db4632983280f217ac84ca91dda21481a6f0ee4da3e53d6cc421eaca92a9d6c"
+    },
+    {
+      "path": "docs/local-backup-contract.md",
+      "sha256": "0865c29d94ac97297843f5a6af9e91938c4e7de7b0c4372a3196f0a151ba2768"
     },
     {
       "path": "docs/public-product-contracts.md",
@@ -348,6 +352,10 @@
       "sha256": "cd0fb1b1f5bc44aff5b621a5c3fb8b75945017b8f87bd78da31649dceaf173e4"
     },
     {
+      "path": "scripts/browser-backup-restore.cjs",
+      "sha256": "4b2dc8252ec3fd2ed34f529a0e545bb17d835b7439cb0b91fa616c2431498c50"
+    },
+    {
       "path": "scripts/browser-capabilities.cjs",
       "sha256": "60b2343afb66ab76cfde89cfa75f03246fa7defb6e4c8a4ccbb5eb26453d8d0c"
     },
@@ -421,7 +429,7 @@
     },
     {
       "path": "shared-persistence.js",
-      "sha256": "7bd06fff3e1d633cafbea2da47d1e97a411372a187e7f14f1721aef648e8813d"
+      "sha256": "5599259234ee5f8a8536cadd3a8d7603d955e7667e6340466c905c68a0220d3c"
     },
     {
       "path": "smart-sheet-adapter.js",
@@ -478,6 +486,10 @@
     {
       "path": "tests/identity-public-equivalence.test.cjs",
       "sha256": "e80fc2ac03f2222cf3c25887eeea3820da2f162bbcc941f0844c9f5b9581a5e1"
+    },
+    {
+      "path": "tests/local-backup-restore.test.cjs",
+      "sha256": "72ac2b1821b34734c3533363369f175acc8c90ea88964f422201044ae56ebd97"
     },
     {
       "path": "tests/product-identity-contracts.test.cjs",
